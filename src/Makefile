@@ -7,6 +7,7 @@
 # *************************************
 
 pandora: main.o server_utilities.o
+	-rm -r build
 	mkdir build
 	g++ -std=c++17 main.o server_utilities.o -o ./build/pandora -lhttpserver -pthread
 	rm *.o

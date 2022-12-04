@@ -10,6 +10,7 @@
 #include "server_constants.h"
 #include "server_options.h"
 #include <httpserver.hpp>
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -93,6 +94,18 @@ int main(int argc, char** argv) {
         }
     }
 
+    // Create Pandora's directories
+    // Create Pandora Storage Server directory
+    pandora::server_utilities::CreateDirectory("/var/lib/pandora");
+    // Create main storage directory
+    pandora::server_utilities::CreateDirectory("/var/lib/pandora/storage");
+    // Create logs directory
+    pandora::server_utilities::CreateDirectory("/var/lib/pandora/logs");
+    // Create elements storage directory
+    pandora::server_utilities::CreateDirectory("/var/lib/pandora/storage/elements");
+    // Create files storage directory
+    pandora::server_utilities::CreateDirectory("/var/lib/pandora/storage/files");
+
     // Server startup messages
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";
     pandora::server_utilities::ConsoleLog("Debug mode: " + (pandora::server_options::debug_enabled ? std::string("Enabled") : std::string("Disabled")));
@@ -106,7 +119,7 @@ int main(int argc, char** argv) {
 
     hello_world_resource hwr;
     ws.register_resource("/hello", &hwr);
-
+    
     ws.start(true);
     
     return 0;
