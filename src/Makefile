@@ -15,7 +15,8 @@ main.o: ./server/main.cc
 	g++ -std=c++17 -c ./server/main.cc -lhttpserver -pthread
 
 server_utilities.o: ./server/server_utilities.cc ./server/server_utilities.h
-	g++ -c ./server/server_utilities.cc -lhttpserver -pthread
+	g++ -std=c++17 -c ./server/server_utilities.cc -lhttpserver -pthread
 
 clean:
-	rm -r build
+	-rm *.o
+	-rm -r build

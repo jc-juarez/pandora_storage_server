@@ -15,20 +15,20 @@ namespace pandora {
 
     namespace default_options {
 
-        constexpr int port_number {5000};
-        constexpr bool debug_enabled {true};
-        constexpr bool logs_enabled {true};
-        constexpr bool display_requests {true};
+        inline constexpr int port_number {5000};
+        inline constexpr bool debug_enabled {true};
+        inline constexpr bool logs_enabled {true};
+        inline constexpr bool display_requests {true};
 
     }
 
     namespace server_constants {
 
-        constexpr char port_number_option {'p'};
-        constexpr char debug_enabled_option {'d'};
-        constexpr char logs_enabled_option {'l'};
-        constexpr char display_requests_option {'r'};
-        constexpr std::string_view off_option {"off"};
+        inline constexpr char port_number_option {'p'};
+        inline constexpr char debug_enabled_option {'d'};
+        inline constexpr char logs_enabled_option {'l'};
+        inline constexpr char display_requests_option {'r'};
+        inline constexpr std::string_view off_option {"off"};
 
     }
 

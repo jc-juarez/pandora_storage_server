@@ -16,6 +16,7 @@
 #include <thread>
 #include <chrono>
 
+// External server options definition
 namespace pandora {
 
     namespace server_options {
