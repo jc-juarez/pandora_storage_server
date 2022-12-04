@@ -29,6 +29,11 @@ namespace pandora {
         inline constexpr char logs_enabled_option {'l'};
         inline constexpr char display_requests_option {'r'};
         inline constexpr std::string_view off_option {"off"};
+        inline constexpr std::string_view pandora_directory_path {"/var/lib/pandora"};
+        inline constexpr std::string_view storage_directory_path {"/var/lib/pandora/storage"};
+        inline constexpr std::string_view logs_directory_path {"/var/lib/pandora/logs"};
+        inline constexpr std::string_view elements_directory_path {"/var/lib/pandora/storage/elements"};
+        inline constexpr std::string_view files_directory_path {"/var/lib/pandora/storage/files"};
 
     }
 

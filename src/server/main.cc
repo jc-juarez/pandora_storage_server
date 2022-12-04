@@ -5,13 +5,15 @@
 // Author: Juan Carlos Juárez
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
-      
+
+#include "../storage/storage_operations.h"
 #include "server_utilities.h"
 #include "server_constants.h"
 #include "server_options.h"
 #include <httpserver.hpp>
 #include <filesystem>
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 #include <thread>
@@ -26,6 +28,8 @@ namespace pandora {
         bool debug_enabled {};
         bool logs_enabled {};
         bool display_requests {};
+        std::string server_session_id {};
+        std::string logs_file_path {};
 
     }
 
@@ -58,7 +62,21 @@ int main(int argc, char** argv) {
     pandora::server_options::debug_enabled = pandora::default_options::debug_enabled;
     pandora::server_options::logs_enabled = pandora::default_options::logs_enabled;
     pandora::server_options::display_requests = pandora::default_options::display_requests;
-    
+
+    // Server session ID (8 first digits correspond to date, 8 latter digits are randomly generated)
+    // Date-Time Identifier
+    std::string datetime_id {};
+    datetime_id.append(pandora::server_utilities::GetDateTime().year + 
+                       pandora::server_utilities::GetDateTime().month +
+                       pandora::server_utilities::GetDateTime().day + "-");
+    pandora::server_options::server_session_id.append(datetime_id);
+    // Random identifier
+    std::random_device rd;
+    std::mt19937 seed(rd());
+    std::uniform_int_distribution<int> range(10000000, 99999999);
+    std::string random_id {std::to_string(range(seed))};  
+    pandora::server_options::server_session_id.append(random_id);
+
     // Command-line arguments for server startup
     // p={Port Number: #} d={Debug enabled: off} l={Logs enabled: off} r={Display requests: off}
     std::vector<std::string> args(argv, argv + argc);
@@ -94,23 +112,34 @@ int main(int argc, char** argv) {
         }
     }
 
-    // Create Pandora's directories
+    // Create Pandora's directories (requires sudo)
     // Create Pandora Storage Server directory
-    pandora::server_utilities::CreateDirectory("/var/lib/pandora");
+    pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::pandora_directory_path));
     // Create main storage directory
-    pandora::server_utilities::CreateDirectory("/var/lib/pandora/storage");
+    pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::storage_directory_path));
     // Create logs directory
-    pandora::server_utilities::CreateDirectory("/var/lib/pandora/logs");
+    pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::logs_directory_path));
     // Create elements storage directory
-    pandora::server_utilities::CreateDirectory("/var/lib/pandora/storage/elements");
+    pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::elements_directory_path));
     // Create files storage directory
-    pandora::server_utilities::CreateDirectory("/var/lib/pandora/storage/files");
+    pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::files_directory_path));
 
     // Server startup messages
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";
     pandora::server_utilities::ConsoleLog("Debug mode: " + (pandora::server_options::debug_enabled ? std::string("Enabled") : std::string("Disabled")));
     pandora::server_utilities::ConsoleLog("Logs: " + (pandora::server_options::logs_enabled ? std::string("Enabled") : std::string("Disabled")));
     pandora::server_utilities::ConsoleLog("Display Requests: " + (pandora::server_options::display_requests ? std::string("Enabled") : std::string("Disabled")));
+    pandora::server_utilities::ConsoleLog("Server Session ID: " + pandora::server_options::server_session_id);
+    
+    // Logs file
+    if(pandora::server_options::logs_enabled) {
+        std::string logs_file_path {};
+        logs_file_path.append(std::string(pandora::server_constants::logs_directory_path) + "/pandoralog-" + pandora::server_options::server_session_id + ".txt");
+        pandora::server_options::logs_file_path = logs_file_path;
+        pandora::storage_operations::AddFileContent(pandora::server_options::logs_file_path, "", false);
+        pandora::server_utilities::ConsoleLog("Logs will be recorded at file: " + pandora::server_options::logs_file_path);
+    }
+
     if(pandora::server_options::debug_enabled) std::cout << "\n";
     std::cout << "* Running on port: " << pandora::server_options::port_number << "\n";
 
