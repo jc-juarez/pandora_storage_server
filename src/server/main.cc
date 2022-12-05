@@ -7,6 +7,7 @@
 // *************************************
 
 #include "../storage/storage_operations.h"
+#include "server_endpoints.h"
 #include "server_utilities.h"
 #include "server_constants.h"
 #include "server_options.h"
@@ -27,7 +28,6 @@ namespace pandora {
         int port_number {};
         bool debug_enabled {};
         bool logs_enabled {};
-        bool display_requests {};
         std::string server_session_id {};
         std::string logs_file_path {};
 
@@ -35,33 +35,12 @@ namespace pandora {
 
 } // namespace pandora
 
-void HelloWorld() {
-    for(;;) {
-        std::cout << "Hellooooo!!!\n";
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-}
-
-class hello_world_resource : public httpserver::http_resource {
-public:
-    std::shared_ptr<httpserver::http_response> render(const httpserver::http_request&) {
-        std::cout << "Called\n";
-        if(pandora::server_options::debug_enabled) std::cout << "IT WORKS Debug enabled after";
-        std::thread t1(HelloWorld);
-        t1.detach();
-        std::string response {"Hello World from "};
-        response.append(std::to_string(pandora::server_options::port_number));
-        return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
-    }
-};
-
 int main(int argc, char** argv) {
 
     // Initial server configiration
     pandora::server_options::port_number = pandora::default_options::port_number;
     pandora::server_options::debug_enabled = pandora::default_options::debug_enabled;
     pandora::server_options::logs_enabled = pandora::default_options::logs_enabled;
-    pandora::server_options::display_requests = pandora::default_options::display_requests;
 
     // Server session ID (8 first digits correspond to date, 8 latter digits are randomly generated)
     // Date-Time Identifier
@@ -71,14 +50,11 @@ int main(int argc, char** argv) {
                        pandora::server_utilities::GetDateTime().day + "-");
     pandora::server_options::server_session_id.append(datetime_id);
     // Random identifier
-    std::random_device rd;
-    std::mt19937 seed(rd());
-    std::uniform_int_distribution<int> range(10000000, 99999999);
-    std::string random_id {std::to_string(range(seed))};  
+    std::string random_id {pandora::server_utilities::GetRandomString_Size8()};  
     pandora::server_options::server_session_id.append(random_id);
 
     // Command-line arguments for server startup
-    // p={Port Number: #} d={Debug enabled: off} l={Logs enabled: off} r={Display requests: off}
+    // p={Port Number: #} d={Debug enabled: off} l={Logs enabled: off}
     std::vector<std::string> args(argv, argv + argc);
     
     // Options updates based on commands
@@ -105,12 +81,31 @@ int main(int argc, char** argv) {
                 case pandora::server_constants::logs_enabled_option :
                     if(option_value == pandora::server_constants::off_option) pandora::server_options::logs_enabled = false;
                     break;
-                case pandora::server_constants::display_requests_option :
-                    if(option_value == pandora::server_constants::off_option) pandora::server_options::display_requests = false;
-                    break;
             }
         }
     }
+
+    // Server creation
+    httpserver::webserver pandora_storage_server = httpserver::create_webserver(pandora::server_options::port_number)
+                               .not_found_resource(pandora::server_endpoints::resource_not_found)
+                               .method_not_allowed_resource(pandora::server_endpoints::method_not_allowed);
+
+    // Server Endpoints referencing
+    // Create Elements Container (PUT)
+    pandora::server_endpoints::CreateElementsContainerEndpoint create_elements_container_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, create_elements_container_endpoint, std::string(pandora::server_constants::http_put), 
+                                                std::string(pandora::server_constants::create_elements_container_endpoint_url));
+    // Get Elements Container (GET)
+    pandora::server_endpoints::GetElementsContainerEndpoint get_elements_container_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, get_elements_container_endpoint, std::string(pandora::server_constants::http_get), 
+                                                std::string(pandora::server_constants::get_elements_container_endpoint_url));
+    // Delete Elements Container (DELETE)
+    pandora::server_endpoints::DeleteElementsContainerEndpoint delete_elements_container_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, delete_elements_container_endpoint, std::string(pandora::server_constants::http_delete), 
+                                                std::string(pandora::server_constants::delete_elements_container_endpoint_url));
+    
+    // Start Pandora Storage Server in non-blocking mode
+    pandora_storage_server.start(false);
 
     // Create Pandora's directories (requires sudo)
     // Create Pandora Storage Server directory
@@ -128,7 +123,6 @@ int main(int argc, char** argv) {
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";
     pandora::server_utilities::ConsoleLog("Debug mode: " + (pandora::server_options::debug_enabled ? std::string("Enabled") : std::string("Disabled")));
     pandora::server_utilities::ConsoleLog("Logs: " + (pandora::server_options::logs_enabled ? std::string("Enabled") : std::string("Disabled")));
-    pandora::server_utilities::ConsoleLog("Display Requests: " + (pandora::server_options::display_requests ? std::string("Enabled") : std::string("Disabled")));
     pandora::server_utilities::ConsoleLog("Server Session ID: " + pandora::server_options::server_session_id);
     
     // Logs file
@@ -141,15 +135,10 @@ int main(int argc, char** argv) {
     }
 
     if(pandora::server_options::debug_enabled) std::cout << "\n";
-    std::cout << "* Running on port: " << pandora::server_options::port_number << "\n";
+    std::cout << "* Running on port: " << pandora::server_options::port_number << "\n\n";
 
-    // Web server creation
-    httpserver::webserver ws = httpserver::create_webserver(pandora::server_options::port_number);
-
-    hello_world_resource hwr;
-    ws.register_resource("/hello", &hwr);
-    
-    ws.start(true);
+    // Run forever
+    for(;;) {}
     
     return 0;
 }

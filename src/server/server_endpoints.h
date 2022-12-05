@@ -1,7 +1,7 @@
 // *************************************
 // Pandora Storage Server
 // Server
-// 'server_end.h'
+// 'server_endpoints.h'
 // Author: Juan Carlos Juárez
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
@@ -9,13 +9,35 @@
 #ifndef SERVER_ENDPOINTS_H
 #define SERVER_ENDPOINTS_H
 
-#include <string>
+#include <httpserver.hpp>
 
 namespace pandora {
 
-    namespace server_utilities {
+    namespace server_endpoints {
 
-        void ConsoleLog(const std::string);
+        // Resource not found
+        std::shared_ptr<httpserver::http_response> resource_not_found(const httpserver::http_request&);
+
+        // HTTP Method not allowed
+        std::shared_ptr<httpserver::http_response> method_not_allowed(const httpserver::http_request&);
+
+        // Create Elements Container
+        class CreateElementsContainerEndpoint : public httpserver::http_resource {
+            public:
+                std::shared_ptr<httpserver::http_response> render_PUT(const httpserver::http_request&);
+        };
+
+        // Get Elements Container
+        class GetElementsContainerEndpoint : public httpserver::http_resource {
+            public:
+                std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request&);
+        };
+
+        // Delete Elements Container
+        class DeleteElementsContainerEndpoint : public httpserver::http_resource {
+            public:
+                std::shared_ptr<httpserver::http_response> render_DELETE(const httpserver::http_request&);
+        };
 
     }
 

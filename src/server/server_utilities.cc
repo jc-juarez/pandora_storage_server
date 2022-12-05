@@ -8,14 +8,19 @@
 
 #include "server_utilities.h"
 #include "server_options.h"
+#include <httpserver.hpp>
 #include <filesystem>
 #include <iostream>
+#include <random>
 #include <string>
 #include <ctime>
 
 namespace pandora {
 
     namespace server_utilities {
+
+        static std::random_device rd;
+        static std::mt19937 seed(rd());
 
         void ConsoleLog(const std::string log) {
             if(server_options::debug_enabled) std::cout << "<> " << log << "\n";
@@ -55,6 +60,11 @@ namespace pandora {
             if(dt.seconds.size() < two_digits) dt.seconds.insert(initial_position, "0");
 
             return dt;
+        }
+
+        std::string GetRandomString_Size8() {
+            std::uniform_int_distribution<int> range(10000000, 99999999);
+            return std::string{std::to_string(range(seed))}; 
         }
 
     }

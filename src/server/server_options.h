@@ -18,7 +18,6 @@ namespace pandora {
         extern int port_number;
         extern bool debug_enabled;
         extern bool logs_enabled;
-        extern bool display_requests;
         extern std::string server_session_id;
         extern std::string logs_file_path;
 
