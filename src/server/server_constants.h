@@ -29,6 +29,7 @@ namespace pandora {
         inline constexpr char display_requests_option {'r'};
         inline constexpr std::string_view off_option {"off"};
         inline constexpr std::string_view http_put {"PUT"};
+        inline constexpr std::string_view http_post {"POST"};
         inline constexpr std::string_view http_get {"GET"};
         inline constexpr std::string_view http_delete {"DELETE"};
         inline constexpr std::string_view pandora_directory_path {"/var/lib/pandora"};
@@ -40,8 +41,11 @@ namespace pandora {
         // Endpoints URLs
         // Elements Container
         inline constexpr std::string_view create_elements_container_endpoint_url {"/pandora/create-elements-container/{arg1}"};
-        inline constexpr std::string_view get_elements_container_endpoint_url {"/pandora/get-elements-container/{arg1}"};
         inline constexpr std::string_view delete_elements_container_endpoint_url {"/pandora/delete-elements-container/{arg1}"};
+        // Elements
+        inline constexpr std::string_view set_element_endpoint_url {"/pandora/set-element/{arg1}/{arg2}"};
+        inline constexpr std::string_view get_element_endpoint_url {"/pandora/get-element/{arg1}/{arg2}"};
+        inline constexpr std::string_view delete_element_endpoint_url {"/pandora/delete-element/{arg1}/{arg2}"};
 
     }
 

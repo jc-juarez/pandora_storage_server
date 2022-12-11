@@ -1,22 +1,24 @@
 // *************************************
 // Pandora Storage Server
 // Server
-// 'elements_container.h'
+// 'orion_engine.h'
 // Author: Juan Carlos Juárez
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#ifndef ELEMENTS_CONTAINER_H
-#define ELEMENTS_CONTAINER_H
+#ifndef ORION_ENGINE_H
+#define ORION_ENGINE_H
 
-#include <sstream>
-#include <string>
+#include <shared_mutex>
 
 namespace pandora {
 
     namespace core {
 
-        void CreateElementsContainer(const std::string&, const std::string&, std::stringstream&);
+        // Storage Synchronization
+        extern std::shared_mutex delete_elements_container_mutex;
+
+        void InitialLiveMemoryFilling();
 
     }
 

@@ -13,7 +13,7 @@ namespace pandora {
 
     namespace storage_operations {
 
-        void AddFileContent(const std::string file_path, const std::string content, bool append = false) {
+        void AddFileContent(const std::string file_path, const std::string content, bool append) {
             std::ofstream outfile;
             if (append)
                 outfile.open(file_path, std::ios_base::app);

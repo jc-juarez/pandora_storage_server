@@ -64,7 +64,13 @@ namespace pandora {
 
         std::string GetRandomString_Size8() {
             std::uniform_int_distribution<int> range(10000000, 99999999);
-            return std::string{std::to_string(range(seed))}; 
+            return std::to_string(range(seed)); 
+        }
+
+        std::string GenerateTransactionID() {
+            std::string transaction_id {};
+            transaction_id.append(pandora::server_utilities::GetRandomString_Size8() + "-" + pandora::server_utilities::GetRandomString_Size8());
+            return std::move(transaction_id);
         }
 
     }

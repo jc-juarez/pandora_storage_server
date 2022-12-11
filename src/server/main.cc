@@ -6,6 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
+#include "../storage/core/orion_engine.h"
 #include "../storage/storage_operations.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
@@ -19,6 +20,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <unistd.h>
 
 // External server options definition
 namespace pandora {
@@ -36,6 +38,9 @@ namespace pandora {
 } // namespace pandora
 
 int main(int argc, char** argv) {
+
+    // Check for process running with privileges
+    if(getuid()) throw std::runtime_error("Pandora could not start without root user privileges. Run the process as root.");
 
     // Initial server configiration
     pandora::server_options::port_number = pandora::default_options::port_number;
@@ -95,14 +100,22 @@ int main(int argc, char** argv) {
     pandora::server_endpoints::CreateElementsContainerEndpoint create_elements_container_endpoint;
     pandora::server_utilities::RegisterEndpoint(pandora_storage_server, create_elements_container_endpoint, std::string(pandora::server_constants::http_put), 
                                                 std::string(pandora::server_constants::create_elements_container_endpoint_url));
-    // Get Elements Container (GET)
-    pandora::server_endpoints::GetElementsContainerEndpoint get_elements_container_endpoint;
-    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, get_elements_container_endpoint, std::string(pandora::server_constants::http_get), 
-                                                std::string(pandora::server_constants::get_elements_container_endpoint_url));
     // Delete Elements Container (DELETE)
     pandora::server_endpoints::DeleteElementsContainerEndpoint delete_elements_container_endpoint;
     pandora::server_utilities::RegisterEndpoint(pandora_storage_server, delete_elements_container_endpoint, std::string(pandora::server_constants::http_delete), 
                                                 std::string(pandora::server_constants::delete_elements_container_endpoint_url));
+    // Set Element (POST)
+    pandora::server_endpoints::SetElementEndpoint set_element_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, set_element_endpoint, std::string(pandora::server_constants::http_post), 
+                                                std::string(pandora::server_constants::set_element_endpoint_url));
+    // Get Element (GET)
+    pandora::server_endpoints::GetElementEndpoint get_element_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, get_element_endpoint, std::string(pandora::server_constants::http_get), 
+                                                std::string(pandora::server_constants::get_element_endpoint_url));
+    // Delete Element (DELETE)
+    pandora::server_endpoints::DeleteElementEndpoint delete_element_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, delete_element_endpoint, std::string(pandora::server_constants::http_delete), 
+                                                std::string(pandora::server_constants::delete_element_endpoint_url));
     
     // Start Pandora Storage Server in non-blocking mode
     pandora_storage_server.start(false);
@@ -118,6 +131,9 @@ int main(int argc, char** argv) {
     pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::elements_directory_path));
     // Create files storage directory
     pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::files_directory_path));
+
+    // Initial Live Memory Filling
+    pandora::core::InitialLiveMemoryFilling();
 
     // Server startup messages
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";

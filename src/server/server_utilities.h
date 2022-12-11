@@ -30,6 +30,7 @@ namespace pandora {
         void CreateDirectory(const std::filesystem::path);
         DateTime GetDateTime();
         std::string GetRandomString_Size8();
+        std::string GenerateTransactionID();
 
         // Functions Templates
         template <typename T> 
