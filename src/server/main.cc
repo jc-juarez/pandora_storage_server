@@ -53,8 +53,27 @@ int main(int argc, char** argv) {
     // Storage Core: Containers Cache creation
     pandora::ContainersCache main_cache;
 
-    // Server Endpoints Referencing
-    pandora::server_utilities::SetEndpoints(pandora_storage_server, main_cache, server_options);
+    // Server Endpoints referencing
+    // Create Elements Container (PUT)
+    pandora::server_endpoints::CreateElementsContainerEndpoint create_elements_container_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, create_elements_container_endpoint, std::string(pandora::server_constants::http_put), 
+                                                std::string(pandora::server_constants::create_elements_container_endpoint_url));
+    // Delete Elements Container (DELETE)
+    pandora::server_endpoints::DeleteElementsContainerEndpoint delete_elements_container_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, delete_elements_container_endpoint, std::string(pandora::server_constants::http_delete), 
+                                                std::string(pandora::server_constants::delete_elements_container_endpoint_url));
+    // Set Element (POST)
+    pandora::server_endpoints::SetElementEndpoint set_element_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, set_element_endpoint, std::string(pandora::server_constants::http_post), 
+                                                std::string(pandora::server_constants::set_element_endpoint_url));
+    // Get Element (GET)
+    pandora::server_endpoints::GetElementEndpoint get_element_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, get_element_endpoint, std::string(pandora::server_constants::http_get), 
+                                                std::string(pandora::server_constants::get_element_endpoint_url));
+    // Delete Element (DELETE)
+    pandora::server_endpoints::DeleteElementEndpoint delete_element_endpoint;
+    pandora::server_utilities::RegisterEndpoint(pandora_storage_server, delete_element_endpoint, std::string(pandora::server_constants::http_delete), 
+                                                std::string(pandora::server_constants::delete_element_endpoint_url));
     
     // Start Pandora Storage Server in non-blocking mode
     pandora_storage_server.start(false);

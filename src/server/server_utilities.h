@@ -30,7 +30,6 @@ namespace pandora {
 
         void ConsoleLog(const std::string);
         void CreateDirectory(const std::filesystem::path);
-        void SetEndpoints(httpserver::webserver&, pandora::ContainersCache&, pandora::ServerOptions&);
         void CreateBaseDirectories();
         DateTime GetDateTime();
         std::string GetRandomString_Size8();
