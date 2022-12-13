@@ -18,8 +18,6 @@ namespace pandora {
         // Storage Synchronization
         extern std::shared_mutex delete_elements_container_mutex;
 
-        void InitialLiveMemoryFilling();
-
     }
 
 } // namespace pandora

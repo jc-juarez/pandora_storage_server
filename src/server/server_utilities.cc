@@ -7,6 +7,8 @@
 // *************************************
 
 #include "server_utilities.h"
+#include "server_endpoints.h"
+#include "server_constants.h"
 #include "server_options.h"
 #include <httpserver.hpp>
 #include <filesystem>
@@ -21,10 +23,6 @@ namespace pandora {
 
         static std::random_device rd;
         static std::mt19937 seed(rd());
-
-        void ConsoleLog(const std::string log) {
-            if(server_options::debug_enabled) std::cout << "<> " << log << "\n";
-        }
 
         void CreateDirectory(const std::filesystem::path path) {
             try {
@@ -60,6 +58,42 @@ namespace pandora {
             if(dt.seconds.size() < two_digits) dt.seconds.insert(initial_position, "0");
 
             return dt;
+        }
+
+        void SetEndpoints(httpserver::webserver& pandora_storage_server, pandora::ContainersCache& main_cache, pandora::ServerOptions& server_options) {
+
+            // Create Elements Container (PUT)
+            pandora::server_endpoints::CreateElementsContainerEndpoint create_elements_container_endpoint;
+            RegisterEndpoint(pandora_storage_server, create_elements_container_endpoint, std::string(pandora::server_constants::http_put), 
+                                                        std::string(pandora::server_constants::create_elements_container_endpoint_url));
+            // Delete Elements Container (DELETE)
+            pandora::server_endpoints::DeleteElementsContainerEndpoint delete_elements_container_endpoint;
+            RegisterEndpoint(pandora_storage_server, delete_elements_container_endpoint, std::string(pandora::server_constants::http_delete), 
+                                                        std::string(pandora::server_constants::delete_elements_container_endpoint_url));
+            // Set Element (POST)
+            pandora::server_endpoints::SetElementEndpoint set_element_endpoint;
+            RegisterEndpoint(pandora_storage_server, set_element_endpoint, std::string(pandora::server_constants::http_post), 
+                                                        std::string(pandora::server_constants::set_element_endpoint_url));
+            // Get Element (GET)
+            pandora::server_endpoints::GetElementEndpoint get_element_endpoint;
+            RegisterEndpoint(pandora_storage_server, get_element_endpoint, std::string(pandora::server_constants::http_get), 
+                                                        std::string(pandora::server_constants::get_element_endpoint_url));
+            // Delete Element (DELETE)
+            pandora::server_endpoints::DeleteElementEndpoint delete_element_endpoint;
+            RegisterEndpoint(pandora_storage_server, delete_element_endpoint, std::string(pandora::server_constants::http_delete), 
+                                                        std::string(pandora::server_constants::delete_element_endpoint_url));
+
+        }
+
+        void CreateBaseDirectories() {
+            // Create Pandora Storage Server directory
+            pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::pandora_directory_path));
+            // Create main storage directory
+            pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::storage_directory_path));
+            // Create logs directory
+            pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::logs_directory_path));
+            // Create elements storage directory
+            pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::elements_directory_path));
         }
 
         std::string GetRandomString_Size8() {

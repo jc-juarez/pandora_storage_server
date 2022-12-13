@@ -10,18 +10,47 @@
 #define SERVER_OPTIONS_H
 
 #include <string>
+#include <vector>
 
 namespace pandora {
 
-    namespace server_options {
+    class ServerOptions {
 
-        extern int port_number;
-        extern bool debug_enabled;
-        extern bool logs_enabled;
-        extern std::string server_session_id;
-        extern std::string logs_file_path;
+        // Constructor
+        public:
+            ServerOptions(int, bool, bool, std::string, std::string);
 
-    }
+        // Private properties
+        private:
+            int m_port_number;
+            bool m_debug_enabled;
+            bool m_logs_enabled;
+            std::string m_server_session_id;
+            std::string m_logs_file_path;
+
+        // Setter Methods
+        public:
+            void SetPortNumber(int);
+            void SetDebugEnabled(bool);
+            void SetLogsEnabled(bool);
+            void SetServerSessionID(std::string);
+            void SetLogsFilePath(std::string);
+
+        // Getter Methods
+        public:
+            int GetPortNumber() const;
+            bool GetDebugEnabled() const;
+            bool GetLogsEnabled() const;
+            std::string GetServerSessionID() const;
+            std::string GetLogsFilePath() const;
+
+        // Server Capabilities
+        public:
+            void OverrideOptions(const std::vector<std::string>);
+            void ConsoleLog(const std::string);
+            void CreateLogsFile();
+
+    };
 
 } // namespace pandora
 

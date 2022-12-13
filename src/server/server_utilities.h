@@ -9,6 +9,8 @@
 #ifndef SERVER_UTILITIES_H
 #define SERVER_UTILITIES_H
 
+#include "../storage/core/containers_cache.h"
+#include "server_options.h"
 #include <httpserver.hpp>
 #include <filesystem>
 #include <string>
@@ -28,6 +30,8 @@ namespace pandora {
 
         void ConsoleLog(const std::string);
         void CreateDirectory(const std::filesystem::path);
+        void SetEndpoints(httpserver::webserver&, pandora::ContainersCache&, pandora::ServerOptions&);
+        void CreateBaseDirectories();
         DateTime GetDateTime();
         std::string GetRandomString_Size8();
         std::string GenerateTransactionID();

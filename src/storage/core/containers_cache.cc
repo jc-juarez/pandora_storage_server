@@ -1,20 +1,17 @@
 // *************************************
 // Pandora Storage Server
-// Server
-// 'orion_engine.cc'
+// Storage Core
+// 'containers_cache.cc'
 // Author: Juan Carlos Juárez
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#include <shared_mutex>
+#include "containers_cache.h"
 
 namespace pandora {
 
-    namespace core {
+    ContainersCache::ContainersCache() {}
 
-        // Storage Synchronization
-        std::shared_mutex delete_elements_container_mutex;
+    void ContainersCache::InitialLiveMemoryFilling() {}
 
-    }
-
-} // namespace pandora
+}
