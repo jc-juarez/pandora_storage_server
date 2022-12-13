@@ -14,7 +14,7 @@
 
 namespace pandora {
 
-    namespace storage_operations {
+    namespace storage {
 
         void AddFileContent(const std::string, const std::string, bool);
 

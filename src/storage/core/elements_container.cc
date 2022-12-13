@@ -35,7 +35,7 @@ namespace pandora {
                 }
             }
             
-            storage_operations::AddFileContent(elements_container_path, "", false);
+            storage::AddFileContent(elements_container_path, "", false);
 
             delete_elements_container_mutex.unlock_shared();
         }

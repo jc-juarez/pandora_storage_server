@@ -89,7 +89,7 @@ namespace pandora {
             std::string logs_file_path {};
             logs_file_path.append(std::string(pandora::server_constants::logs_directory_path) + "/pandoralog-" + GetServerSessionID() + ".txt");
             SetLogsFilePath(logs_file_path);
-            pandora::storage_operations::AddFileContent(GetLogsFilePath(), "", false);
+            pandora::storage::AddFileContent(GetLogsFilePath(), "", false);
             ConsoleLog("Logs will be recorded at file: " + GetLogsFilePath());
         }
 
