@@ -24,41 +24,83 @@ namespace pandora {
         // HTTP Method not allowed
         std::shared_ptr<httpserver::http_response> method_not_allowed(const httpserver::http_request&);
 
+        // Base Endpoint Class
+        class BaseEndpoint : public httpserver::http_resource {
+
+            // Constructor
+            public:
+                BaseEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+
+            // Dependencies
+            public:
+                std::shared_ptr<pandora::ElementContainerCache> m_main_cache;
+                pandora::ServerOptions* m_server_options;
+
+        };
+
         // Create Element Container
-        class CreateElementContainerEndpoint : public httpserver::http_resource {
+        class CreateElementContainerEndpoint : public BaseEndpoint {
 
             // Constructor
             public:
                 CreateElementContainerEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
 
+            // Endpoint
             public:
                 std::shared_ptr<httpserver::http_response> render_PUT(const httpserver::http_request&);
-                std::shared_ptr<pandora::ElementContainerCache> m_main_cache;
-                pandora::ServerOptions* m_server_options;
+
         };
 
         // Delete Element Container
-        class DeleteElementContainerEndpoint : public httpserver::http_resource {
+        class DeleteElementContainerEndpoint : public BaseEndpoint {
+
+            // Constructor
+            public:
+                DeleteElementContainerEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+
+            // Endpoint
             public:
                 std::shared_ptr<httpserver::http_response> render_DELETE(const httpserver::http_request&);
+
         };
 
         // Set Element
-        class SetElementEndpoint : public httpserver::http_resource {
+        class SetElementEndpoint : public BaseEndpoint {
+
+            // Constructor
+            public:
+                SetElementEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+            
+            // Endpoint
             public:
                 std::shared_ptr<httpserver::http_response> render_POST(const httpserver::http_request&);
+
         };
 
         // Get Element
-        class GetElementEndpoint : public httpserver::http_resource {
+        class GetElementEndpoint : public BaseEndpoint {
+
+            // Constructor
+            public:
+                GetElementEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+
+            // Endpoint
             public:
                 std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request&);
+
         };
 
         // Delete Element
-        class DeleteElementEndpoint : public httpserver::http_resource {
+        class DeleteElementEndpoint : public BaseEndpoint {
+
+            // Constructor
+            public:
+                DeleteElementEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+
+            // Endpoint
             public:
                 std::shared_ptr<httpserver::http_response> render_DELETE(const httpserver::http_request&);
+
         };
 
     }
