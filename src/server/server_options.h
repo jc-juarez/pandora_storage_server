@@ -18,7 +18,7 @@ namespace pandora {
 
         // Constructor
         public:
-            ServerOptions(int, bool, bool, std::string, std::string);
+            ServerOptions(int, bool, bool);
 
         // Private properties
         private:

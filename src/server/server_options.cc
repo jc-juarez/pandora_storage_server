@@ -16,12 +16,12 @@
 namespace pandora {
 
         // Constructor
-        ServerOptions::ServerOptions(int port_number, bool debug_enabled, bool logs_enabled, std::string server_session_id, std::string logs_file_path) {
+        ServerOptions::ServerOptions(int port_number, bool debug_enabled, bool logs_enabled) {
             m_port_number = port_number;
             m_debug_enabled = debug_enabled;
             m_logs_enabled = logs_enabled;
-            m_server_session_id = server_session_id;
-            m_logs_file_path = logs_file_path;
+            m_server_session_id = "";
+            m_logs_file_path = "";
         }
 
         // Setter Methods

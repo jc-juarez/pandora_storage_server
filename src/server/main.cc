@@ -7,7 +7,6 @@
 // *************************************
 
 #include "../storage/core/containers_cache.h"
-#include "../storage/core/orion_engine.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
 #include "server_constants.h"
@@ -24,21 +23,12 @@ int main(int argc, char** argv) {
     if(getuid()) throw std::runtime_error("Pandora could not start without root user privileges. Run the process as root.");
 
     // Initial server configuration
-    pandora::ServerOptions server_options(pandora::default_options::port_number,
-                                          pandora::default_options::debug_enabled,
-                                          pandora::default_options::logs_enabled,
-                                          std::string(),
-                                          std::string());
+    pandora::ServerOptions server_options(pandora::server_constants::default_port_number,
+                                          pandora::server_constants::default_debug_enabled,
+                                          pandora::server_constants::default_logs_enabled);
 
-    // Server session ID (8 first digits correspond to date, 8 latter digits are randomly generated)
-    std::string server_session_id {};
-    // Date-Time Identifier
-    server_session_id.append(pandora::server_utilities::GetDateTime().year + 
-                                            pandora::server_utilities::GetDateTime().month +
-                                            pandora::server_utilities::GetDateTime().day + "-");
-    // Random identifier
-    server_session_id.append(pandora::server_utilities::GetRandomString_Size8());
-    server_options.SetServerSessionID(server_session_id);
+    // Server Session ID
+    server_options.SetServerSessionID(pandora::server_utilities::GenerateServerSessionID());
 
     // Command-line arguments for server startup override
     // p={Port Number: #} d={Debug enabled: off} l={Logs enabled: off}

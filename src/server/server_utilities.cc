@@ -23,10 +23,10 @@ namespace pandora {
 
         static std::random_device rd;
         static std::mt19937 seed(rd());
+        static std::uniform_int_distribution<int> range(10000000, 99999999);
 
         void CreateDirectory(const std::filesystem::path path) {
             try {
-                // Create Pandora Storage Server directory
                 std::filesystem::create_directories(path);
             } catch(...) {
                 std::string error {};
@@ -96,14 +96,23 @@ namespace pandora {
             pandora::server_utilities::CreateDirectory(std::string(pandora::server_constants::elements_directory_path));
         }
 
-        std::string GetRandomString_Size8() {
-            std::uniform_int_distribution<int> range(10000000, 99999999);
-            return std::to_string(range(seed)); 
+        std::string GetRandomString_Size8() { return std::to_string(range(seed)); }
+
+        std::string GenerateServerSessionID() {
+            // Server session ID (8 first digits correspond to date, 8 latter digits are randomly generated)
+            std::string server_session_id {};
+            // Date-Time Identifier
+            server_session_id.append(GetDateTime().year + 
+                                    GetDateTime().month +
+                                    GetDateTime().day + "-");
+            // Random identifier
+            server_session_id.append(GetRandomString_Size8());
+            return std::move(server_session_id);
         }
 
         std::string GenerateTransactionID() {
             std::string transaction_id {};
-            transaction_id.append(pandora::server_utilities::GetRandomString_Size8() + "-" + pandora::server_utilities::GetRandomString_Size8());
+            transaction_id.append(GetRandomString_Size8() + "-" + GetRandomString_Size8());
             return std::move(transaction_id);
         }
 

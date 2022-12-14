@@ -13,16 +13,14 @@
 
 namespace pandora {
 
-    namespace default_options {
-
-        inline constexpr int port_number {5000};
-        inline constexpr bool debug_enabled {true};
-        inline constexpr bool logs_enabled {true};
-
-    }
-
     namespace server_constants {
 
+        // Default options
+        inline constexpr int default_port_number {5000};
+        inline constexpr bool default_debug_enabled {true};
+        inline constexpr bool default_logs_enabled {true};
+
+        // General constants
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};
         inline constexpr char logs_enabled_option {'l'};

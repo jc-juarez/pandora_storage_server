@@ -28,12 +28,12 @@ namespace pandora {
             std::string seconds {};
         };
 
-        void ConsoleLog(const std::string);
         void CreateDirectory(const std::filesystem::path);
         void SetEndpoints(httpserver::webserver&, pandora::ContainersCache&, pandora::ServerOptions&);
         void CreateBaseDirectories();
         DateTime GetDateTime();
         std::string GetRandomString_Size8();
+        std::string GenerateServerSessionID();
         std::string GenerateTransactionID();
 
         // Functions Templates
