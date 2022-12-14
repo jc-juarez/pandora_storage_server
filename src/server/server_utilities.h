@@ -13,6 +13,7 @@
 #include "server_options.h"
 #include <httpserver.hpp>
 #include <filesystem>
+#include <memory>
 #include <string>
 
 namespace pandora {
@@ -29,7 +30,7 @@ namespace pandora {
         };
 
         void CreateDirectory(const std::filesystem::path);
-        void SetEndpoints(httpserver::webserver&, pandora::ElementContainerCache&, pandora::ServerOptions&);
+        void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions&);
         void CreateBaseDirectories();
         DateTime GetDateTime();
         std::string GetRandomString_Size8();

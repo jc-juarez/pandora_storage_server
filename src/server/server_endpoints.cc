@@ -29,12 +29,20 @@ namespace pandora {
         }
 
         // Create Element Container
+        // Constructor
+        CreateElementContainerEndpoint::CreateElementContainerEndpoint(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options) {
+            m_main_cache = main_cache;
+            m_server_options = server_options;
+        }
+        // Endpoint
         std::shared_ptr<httpserver::http_response> CreateElementContainerEndpoint::render_PUT(const httpserver::http_request& request) {
 
             std::string transaction_id {pandora::server_utilities::GenerateTransactionID()};
             std::stringstream logs_stream {};
             std::string elements_container_name{request.get_arg("arg1")};
             //pandora::server_utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            m_server_options->ConsoleLog("Works!");
+            m_main_cache->InitialLiveMemoryFilling();
             
             core::CreateElementContainer(elements_container_name, transaction_id, logs_stream);
 

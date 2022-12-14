@@ -13,6 +13,7 @@
 #include "server_options.h"
 #include <httpserver.hpp>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 #include <unistd.h>
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
                                .method_not_allowed_resource(pandora::server_endpoints::method_not_allowed);
 
     // Storage Core: Main Cache creation
-    pandora::ElementContainerCache main_cache;
+    std::shared_ptr<pandora::ElementContainerCache> main_cache = std::make_shared<pandora::ElementContainerCache>();
 
     // Server Endpoints Referencing
     pandora::server_utilities::SetEndpoints(pandora_storage_server, main_cache, server_options);
@@ -53,7 +54,7 @@ int main(int argc, char** argv) {
     pandora::server_utilities::CreateBaseDirectories();
 
     // Initial Live Memory Filling
-    main_cache.InitialLiveMemoryFilling();
+    main_cache->InitialLiveMemoryFilling();
 
     // Server startup messages
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";

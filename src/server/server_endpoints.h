@@ -9,7 +9,10 @@
 #ifndef SERVER_ENDPOINTS_H
 #define SERVER_ENDPOINTS_H
 
+#include "../storage/core/live-memory/element_container_cache.h"
+#include "server_options.h"
 #include <httpserver.hpp>
+#include <memory>
 
 namespace pandora {
 
@@ -23,8 +26,15 @@ namespace pandora {
 
         // Create Element Container
         class CreateElementContainerEndpoint : public httpserver::http_resource {
+
+            // Constructor
+            public:
+                CreateElementContainerEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+
             public:
                 std::shared_ptr<httpserver::http_response> render_PUT(const httpserver::http_request&);
+                std::shared_ptr<pandora::ElementContainerCache> m_main_cache;
+                pandora::ServerOptions* m_server_options;
         };
 
         // Delete Element Container

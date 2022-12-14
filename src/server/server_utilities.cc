@@ -61,10 +61,10 @@ namespace pandora {
             return dt;
         }
 
-        void SetEndpoints(httpserver::webserver& pandora_storage_server, pandora::ElementContainerCache& main_cache, pandora::ServerOptions& server_options) {
+        void SetEndpoints(httpserver::webserver& pandora_storage_server, std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions& server_options) {
 
             // Create Elements Container (PUT)
-            static pandora::server_endpoints::CreateElementContainerEndpoint create_element_container_endpoint;
+            static pandora::server_endpoints::CreateElementContainerEndpoint create_element_container_endpoint(main_cache, &server_options);
             RegisterEndpoint(pandora_storage_server, create_element_container_endpoint, pandora::server_constants::http_put, 
                                                         pandora::server_constants::create_element_container_endpoint_url);
             // Delete Elements Container (DELETE)
