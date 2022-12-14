@@ -6,7 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#include "../storage/core/containers_cache.h"
+#include "../storage/core/live-memory/element_container_cache.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
 #include "server_constants.h"
@@ -40,8 +40,8 @@ int main(int argc, char** argv) {
                                .not_found_resource(pandora::server_endpoints::resource_not_found)
                                .method_not_allowed_resource(pandora::server_endpoints::method_not_allowed);
 
-    // Storage Core: Containers Cache creation
-    pandora::ContainersCache main_cache;
+    // Storage Core: Main Cache creation
+    pandora::ElementContainerCache main_cache;
 
     // Server Endpoints Referencing
     pandora::server_utilities::SetEndpoints(pandora_storage_server, main_cache, server_options);

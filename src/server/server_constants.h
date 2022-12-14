@@ -24,7 +24,6 @@ namespace pandora {
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};
         inline constexpr char logs_enabled_option {'l'};
-        inline constexpr char display_requests_option {'r'};
         inline const std::string off_option {"off"};
         inline const std::string http_put {"PUT"};
         inline const std::string http_post {"POST"};
@@ -33,13 +32,12 @@ namespace pandora {
         inline const std::string pandora_directory_path {"/var/lib/pandora"};
         inline const std::string storage_directory_path {"/var/lib/pandora/storage"};
         inline const std::string logs_directory_path {"/var/lib/pandora/logs"};
-        inline const std::string elements_directory_path {"/var/lib/pandora/storage/elements"};
-        inline const std::string files_directory_path {"/var/lib/pandora/storage/files"};
+        inline const std::string element_containers_directory_path {"/var/lib/pandora/storage/element-containers"};
 
         // Endpoints URLs
-        // Elements Container
-        inline const std::string create_elements_container_endpoint_url {"/pandora/create-elements-container/{arg1}"};
-        inline const std::string delete_elements_container_endpoint_url {"/pandora/delete-elements-container/{arg1}"};
+        // Element Container
+        inline const std::string create_element_container_endpoint_url {"/pandora/create-element-container/{arg1}"};
+        inline const std::string delete_element_container_endpoint_url {"/pandora/delete-element-container/{arg1}"};
         // Elements
         inline const std::string set_element_endpoint_url {"/pandora/set-element/{arg1}/{arg2}"};
         inline const std::string get_element_endpoint_url {"/pandora/get-element/{arg1}/{arg2}"};

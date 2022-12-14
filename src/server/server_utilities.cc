@@ -6,6 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
+#include "../storage/core/live-memory/element_container_cache.h"
 #include "server_utilities.h"
 #include "server_endpoints.h"
 #include "server_constants.h"
@@ -60,16 +61,16 @@ namespace pandora {
             return dt;
         }
 
-        void SetEndpoints(httpserver::webserver& pandora_storage_server, pandora::ContainersCache& main_cache, pandora::ServerOptions& server_options) {
+        void SetEndpoints(httpserver::webserver& pandora_storage_server, pandora::ElementContainerCache& main_cache, pandora::ServerOptions& server_options) {
 
             // Create Elements Container (PUT)
-            static pandora::server_endpoints::CreateElementsContainerEndpoint create_elements_container_endpoint;
-            RegisterEndpoint(pandora_storage_server, create_elements_container_endpoint, pandora::server_constants::http_put, 
-                                                        pandora::server_constants::create_elements_container_endpoint_url);
+            static pandora::server_endpoints::CreateElementContainerEndpoint create_element_container_endpoint;
+            RegisterEndpoint(pandora_storage_server, create_element_container_endpoint, pandora::server_constants::http_put, 
+                                                        pandora::server_constants::create_element_container_endpoint_url);
             // Delete Elements Container (DELETE)
-            static pandora::server_endpoints::DeleteElementsContainerEndpoint delete_elements_container_endpoint;
-            RegisterEndpoint(pandora_storage_server, delete_elements_container_endpoint, pandora::server_constants::http_delete, 
-                                                        pandora::server_constants::delete_elements_container_endpoint_url);
+            static pandora::server_endpoints::DeleteElementContainerEndpoint delete_element_container_endpoint;
+            RegisterEndpoint(pandora_storage_server, delete_element_container_endpoint, pandora::server_constants::http_delete, 
+                                                        pandora::server_constants::delete_element_container_endpoint_url);
             // Set Element (POST)
             static pandora::server_endpoints::SetElementEndpoint set_element_endpoint;
             RegisterEndpoint(pandora_storage_server, set_element_endpoint, pandora::server_constants::http_post, 
@@ -93,7 +94,7 @@ namespace pandora {
             // Create logs directory
             pandora::server_utilities::CreateDirectory(pandora::server_constants::logs_directory_path);
             // Create elements storage directory
-            pandora::server_utilities::CreateDirectory(pandora::server_constants::elements_directory_path);
+            pandora::server_utilities::CreateDirectory(pandora::server_constants::element_containers_directory_path);
         }
 
         std::string GetRandomString_Size8() { return std::to_string(range(seed)); }

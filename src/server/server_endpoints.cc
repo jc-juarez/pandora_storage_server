@@ -6,7 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#include "../storage/core/elements_container.h"
+#include "../storage/core/element_container.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
 #include "server_options.h"
@@ -28,15 +28,15 @@ namespace pandora {
             return std::shared_ptr<httpserver::string_response>(new httpserver::string_response("Pandora could not handle the requested HTTP method.", 405, "text/plain"));
         }
 
-        // Create Elements Container
-        std::shared_ptr<httpserver::http_response> CreateElementsContainerEndpoint::render_PUT(const httpserver::http_request& request) {
+        // Create Element Container
+        std::shared_ptr<httpserver::http_response> CreateElementContainerEndpoint::render_PUT(const httpserver::http_request& request) {
 
             std::string transaction_id {pandora::server_utilities::GenerateTransactionID()};
             std::stringstream logs_stream {};
             std::string elements_container_name{request.get_arg("arg1")};
             //pandora::server_utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             
-            core::CreateElementsContainer(elements_container_name, transaction_id, logs_stream);
+            core::CreateElementContainer(elements_container_name, transaction_id, logs_stream);
 
             std::string response {"PUT from"};
             response.append("Create Elements Container");
@@ -45,8 +45,8 @@ namespace pandora {
             return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }
 
-        // Delete Elements Container
-        std::shared_ptr<httpserver::http_response> DeleteElementsContainerEndpoint::render_DELETE(const httpserver::http_request& request) {
+        // Delete Element Container
+        std::shared_ptr<httpserver::http_response> DeleteElementContainerEndpoint::render_DELETE(const httpserver::http_request& request) {
             
             std::string transaction_id {};
             transaction_id.append(pandora::server_utilities::GetRandomString_Size8() + "-" + pandora::server_utilities::GetRandomString_Size8());

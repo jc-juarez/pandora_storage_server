@@ -1,7 +1,7 @@
 // *************************************
 // Pandora Storage Server
-// Server
-// 'elements_container.h'
+// Storage Core
+// 'element_container.h'
 // Author: Juan Carlos Juárez
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
@@ -16,7 +16,7 @@ namespace pandora {
 
     namespace core {
 
-        void CreateElementsContainer(const std::string&, const std::string&, std::stringstream&);
+        void CreateElementContainer(const std::string&, const std::string&, std::stringstream&);
 
     }
 

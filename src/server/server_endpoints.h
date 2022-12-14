@@ -21,14 +21,14 @@ namespace pandora {
         // HTTP Method not allowed
         std::shared_ptr<httpserver::http_response> method_not_allowed(const httpserver::http_request&);
 
-        // Create Elements Container
-        class CreateElementsContainerEndpoint : public httpserver::http_resource {
+        // Create Element Container
+        class CreateElementContainerEndpoint : public httpserver::http_resource {
             public:
                 std::shared_ptr<httpserver::http_response> render_PUT(const httpserver::http_request&);
         };
 
-        // Delete Elements Container
-        class DeleteElementsContainerEndpoint : public httpserver::http_resource {
+        // Delete Element Container
+        class DeleteElementContainerEndpoint : public httpserver::http_resource {
             public:
                 std::shared_ptr<httpserver::http_response> render_DELETE(const httpserver::http_request&);
         };

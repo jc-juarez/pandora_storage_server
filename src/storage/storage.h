@@ -1,7 +1,7 @@
 // *************************************
 // Pandora Storage Server
 // Storage
-// 'storage_operations.h'
+// 'storage.h'
 // Author: Juan Carlos Juárez
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************

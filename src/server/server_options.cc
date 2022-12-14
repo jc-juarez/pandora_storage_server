@@ -6,7 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#include "../storage/storage_operations.h"
+#include "../storage/storage.h"
 #include "server_options.h"
 #include "server_constants.h"
 #include <iostream>
