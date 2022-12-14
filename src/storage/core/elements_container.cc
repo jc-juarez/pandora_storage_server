@@ -25,10 +25,10 @@ namespace pandora {
             // Check for containers with the same name
             delete_elements_container_mutex.lock_shared();
 
-            std::string elements_container_path {std::string(server_constants::elements_directory_path)};
+            std::string elements_container_path {server_constants::elements_directory_path};
             elements_container_path.append("/" + elements_container_name);
 
-            for (const auto & entry : std::filesystem::directory_iterator(std::string(server_constants::elements_directory_path))) {
+            for (const auto & entry : std::filesystem::directory_iterator(server_constants::elements_directory_path)) {
                 if(std::string(entry.path()) == elements_container_path) {
                     std::cout << "Elements Container already exists\n";
                     throw std::runtime_error("");
