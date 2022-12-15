@@ -6,6 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
+#include "../../server/server_options.h"
 #include "../../server/server_utilities.h"
 #include "../../server/server_constants.h"
 #include "../storage.h"
@@ -33,7 +34,7 @@ namespace pandora {
             for (const auto & entry : std::filesystem::directory_iterator(pandora::server_constants::element_containers_directory_path)) {
                 if(std::string(entry.path()) == element_container_path) {
                     server_options->DebugLog("Element Container already exists.", request_data.logs_stream);
-                    server_options->LogToFile(request_data.logs_stream.str());
+                    server_options->LogToFile(request_data);
                     throw std::runtime_error("");
                 }
             }

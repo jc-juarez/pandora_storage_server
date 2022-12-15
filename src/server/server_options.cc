@@ -7,6 +7,7 @@
 // *************************************
 
 #include "../storage/storage.h"
+#include "server_utilities.h"
 #include "server_options.h"
 #include "server_constants.h"
 #include <iostream>
@@ -87,9 +88,11 @@ namespace pandora {
 
         void ServerOptions::ConsoleLog(const std::string log) { if(GetDebugEnabled()) std::cout << "<> " << log << "\n"; }
 
+        void ServerOptions::AppendLog(const std::string log, std::stringstream& logs_stream) { if(GetLogsEnabled()) logs_stream << log << std::endl; }
+
         void ServerOptions::DebugLog(const std::string log, std::stringstream& logs_stream) {
             ConsoleLog(log);
-            if(GetLogsEnabled()) logs_stream << log << std::endl;
+            AppendLog(log, logs_stream);
         }
 
         void ServerOptions::CreateLogsFile() {
@@ -100,7 +103,8 @@ namespace pandora {
             ConsoleLog("Logs will be recorded at file: " + GetLogsFilePath());
         }
 
-        void ServerOptions::LogToFile(const std::string log_content) {
+        void ServerOptions::LogToFile(pandora::server_utilities::RequestData& request_data) {
+            std::string log_content {request_data.logs_stream.str()};
             std::thread write_logs_thread(&ServerOptions::LogToFileThread, this, log_content);
             write_logs_thread.detach();
         }
@@ -115,6 +119,14 @@ namespace pandora {
                 throw std::runtime_error(error);
             }
             write_logs_mutex.unlock();
+        }
+
+        void ServerOptions::LogTransactionStartedFinished(pandora::server_utilities::RequestData& request_data, int server_code) {
+            std::string log {};
+            log.append("[" + request_data.transaction_id + "] ");
+            log.append(server_code == server_constants::TransactionStarted ? "Transaction Started (1) " : "Transaction Finished (0) ");
+            log.append("-> " + request_data.http_method + " " + request_data.request_path);
+            DebugLog(log, request_data.logs_stream);
         }
 
 } // namespace pandora

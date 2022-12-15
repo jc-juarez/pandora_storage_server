@@ -36,6 +36,11 @@ namespace pandora {
         inline const std::string logs_directory_path {"/var/lib/pandora/logs"};
         inline const std::string element_containers_directory_path {"/var/lib/pandora/storage/element-containers"};
 
+        // Server Codes
+        inline constexpr int TransactionStarted {0};
+        inline constexpr int TransactionFinished {1};
+        inline constexpr int TransactionInfo {2};
+
         // Endpoints URLs
         // Element Container
         inline const std::string create_element_container_endpoint_url {"/pandora/create-element-container/{element_container_name}"};

@@ -10,7 +10,6 @@
 #define SERVER_UTILITIES_H
 
 #include "../storage/core/live-memory/element_container_cache.h"
-#include "server_options.h"
 #include <httpserver.hpp>
 #include <unordered_map>
 #include <filesystem>
@@ -19,6 +18,8 @@
 #include <string>
 
 namespace pandora {
+
+    class ServerOptions;
 
     namespace server_utilities {
 
@@ -44,7 +45,6 @@ namespace pandora {
         void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions&);
         void CreateBaseDirectories();
         DateTime GetDateTime();
-        std::string LogTransactionStartedFinished(RequestData&, int&&);
         std::string GetRandomString_Size8();
         std::string GenerateServerSessionID();
         std::string GenerateTransactionID();

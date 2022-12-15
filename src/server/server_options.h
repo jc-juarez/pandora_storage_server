@@ -9,6 +9,7 @@
 #ifndef SERVER_OPTIONS_H
 #define SERVER_OPTIONS_H
 
+#include "server_utilities.h"
 #include <mutex>
 #include <string>
 #include <vector>
@@ -50,10 +51,12 @@ namespace pandora {
         public:
             void OverrideOptions(const std::vector<std::string>);
             void ConsoleLog(const std::string);
+            void AppendLog(const std::string, std::stringstream&);
             void DebugLog(const std::string, std::stringstream&);
             void CreateLogsFile();
-            void LogToFile(const std::string);
+            void LogToFile(pandora::server_utilities::RequestData&);
             void LogToFileThread(const std::string);
+            void LogTransactionStartedFinished(pandora::server_utilities::RequestData&, int);
 
     };
 

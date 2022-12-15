@@ -52,6 +52,7 @@
         "tuple": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "mutex": "cpp"
     }
 }

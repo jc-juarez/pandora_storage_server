@@ -48,16 +48,16 @@ namespace pandora {
                                                                 std::string(request.get_path()), pandora::server_constants::http_put);
             request_data.arguments[pandora::server_constants::element_container_name] = request.get_arg(pandora::server_constants::element_container_name);
 
-            m_server_options->DebugLog(pandora::server_utilities::LogTransactionStartedFinished(request_data, 1), request_data.logs_stream);
+            m_server_options->LogTransactionStartedFinished(request_data, pandora::server_constants::TransactionStarted);
             
             pandora::core::CreateElementContainer(m_main_cache, m_server_options, request_data);
 
             std::string response {};
             response.append("Element Container '" + request_data.arguments[pandora::server_constants::element_container_name] + "' was created.");
 
-            m_server_options->DebugLog(pandora::server_utilities::LogTransactionStartedFinished(request_data, 0), request_data.logs_stream);
+            m_server_options->LogTransactionStartedFinished(request_data, pandora::server_constants::TransactionFinished);
 
-            m_server_options->LogToFile(request_data.logs_stream.str());
+            m_server_options->LogToFile(request_data);
             
             return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }

@@ -97,12 +97,6 @@ namespace pandora {
             pandora::server_utilities::CreateDirectory(pandora::server_constants::element_containers_directory_path);
         }
 
-        std::string LogTransactionStartedFinished(RequestData& request_data, int&& state) {
-            std::string argument {state == 1 ? "Transaction Initiated (1) " : "Transaction Finished (0) "};
-            argument.append("-> [" + request_data.transaction_id + "] " + request_data.http_method + " " + request_data.request_path);
-            return argument;
-        }
-
         std::string GetRandomString_Size8() { return std::to_string(range_8(seed)); }
 
         std::string GenerateServerSessionID() {
