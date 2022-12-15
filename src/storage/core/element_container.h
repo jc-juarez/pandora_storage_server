@@ -9,14 +9,17 @@
 #ifndef ELEMENTS_CONTAINER_H
 #define ELEMENTS_CONTAINER_H
 
+#include "../../server/server_utilities.h"
+#include "live-memory/element_container_cache.h"
 #include <sstream>
+#include <memory>
 #include <string>
 
 namespace pandora {
 
     namespace core {
 
-        void CreateElementContainer(const std::string&, const std::string&, std::stringstream&);
+        void CreateElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::server_utilities::RequestData&);
 
     }
 

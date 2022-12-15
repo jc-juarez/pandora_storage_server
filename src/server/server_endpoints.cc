@@ -9,6 +9,7 @@
 #include "../storage/core/element_container.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
+#include "server_constants.h"
 #include "server_options.h"
 #include <httpserver.hpp>
 #include <sstream>
@@ -40,22 +41,24 @@ namespace pandora {
         : BaseEndpoint(main_cache, server_options) 
         {}
 
-        // Endpoint
+        // Endpoint | Arguments: element_container_name
         std::shared_ptr<httpserver::http_response> CreateElementContainerEndpoint::render_PUT(const httpserver::http_request& request) {
 
-            std::string transaction_id {pandora::server_utilities::GenerateTransactionID()};
-            std::stringstream logs_stream {};
-            std::string elements_container_name{request.get_arg("arg1")};
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
-            m_server_options->ConsoleLog("Works!");
-            m_main_cache->InitialLiveMemoryFilling();
+            pandora::server_utilities::RequestData request_data(pandora::server_utilities::GenerateTransactionID(),
+                                                                std::string(request.get_path()), pandora::server_constants::http_put);
+            request_data.arguments[pandora::server_constants::element_container_name] = request.get_arg(pandora::server_constants::element_container_name);
+
+            m_server_options->DebugLog(pandora::server_utilities::LogTransactionStartedFinished(request_data, 1), request_data.logs_stream);
             
-            core::CreateElementContainer(elements_container_name, transaction_id, logs_stream);
+            pandora::core::CreateElementContainer(m_main_cache, m_server_options, request_data);
 
-            std::string response {"PUT from"};
-            response.append("Create Elements Container");
+            std::string response {};
+            response.append("Element Container '" + request_data.arguments[pandora::server_constants::element_container_name] + "' was created.");
 
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            m_server_options->DebugLog(pandora::server_utilities::LogTransactionStartedFinished(request_data, 0), request_data.logs_stream);
+
+            m_server_options->LogToFile(request_data.logs_stream.str());
+            
             return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }
         // ******************** END ***********************

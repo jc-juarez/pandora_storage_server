@@ -12,13 +12,24 @@
 #include "../storage/core/live-memory/element_container_cache.h"
 #include "server_options.h"
 #include <httpserver.hpp>
+#include <unordered_map>
 #include <filesystem>
+#include <sstream>
 #include <memory>
 #include <string>
 
 namespace pandora {
 
     namespace server_utilities {
+
+        struct RequestData {
+            std::string transaction_id {};
+            std::string request_path {};
+            std::string http_method {};
+            std::unordered_map<std::string, std::string> arguments {};
+            std::stringstream logs_stream {};
+            RequestData(std::string _transaction_id, std::string _request_path, std::string _http_method) : transaction_id(_transaction_id), request_path(_request_path), http_method(_http_method) {}
+        };
 
         struct DateTime {
             std::string year {};
@@ -33,6 +44,7 @@ namespace pandora {
         void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions&);
         void CreateBaseDirectories();
         DateTime GetDateTime();
+        std::string LogTransactionStartedFinished(RequestData&, int&&);
         std::string GetRandomString_Size8();
         std::string GenerateServerSessionID();
         std::string GenerateTransactionID();

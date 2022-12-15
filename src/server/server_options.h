@@ -9,6 +9,7 @@
 #ifndef SERVER_OPTIONS_H
 #define SERVER_OPTIONS_H
 
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -27,6 +28,7 @@ namespace pandora {
             bool m_logs_enabled;
             std::string m_server_session_id;
             std::string m_logs_file_path;
+            std::mutex write_logs_mutex;
 
         // Setter Methods
         public:
@@ -48,7 +50,10 @@ namespace pandora {
         public:
             void OverrideOptions(const std::vector<std::string>);
             void ConsoleLog(const std::string);
+            void DebugLog(const std::string, std::stringstream&);
             void CreateLogsFile();
+            void LogToFile(const std::string);
+            void LogToFileThread(const std::string);
 
     };
 

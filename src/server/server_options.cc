@@ -10,6 +10,8 @@
 #include "server_options.h"
 #include "server_constants.h"
 #include <iostream>
+#include <sstream>
+#include <thread>
 #include <string>
 #include <vector>
 
@@ -85,12 +87,34 @@ namespace pandora {
 
         void ServerOptions::ConsoleLog(const std::string log) { if(GetDebugEnabled()) std::cout << "<> " << log << "\n"; }
 
+        void ServerOptions::DebugLog(const std::string log, std::stringstream& logs_stream) {
+            ConsoleLog(log);
+            if(GetLogsEnabled()) logs_stream << log << std::endl;
+        }
+
         void ServerOptions::CreateLogsFile() {
             std::string logs_file_path {};
             logs_file_path.append(pandora::server_constants::logs_directory_path + "/pandoralog-" + GetServerSessionID() + ".txt");
             SetLogsFilePath(logs_file_path);
             pandora::storage::AddFileContent(GetLogsFilePath(), "", false);
             ConsoleLog("Logs will be recorded at file: " + GetLogsFilePath());
+        }
+
+        void ServerOptions::LogToFile(const std::string log_content) {
+            std::thread write_logs_thread(&ServerOptions::LogToFileThread, this, log_content);
+            write_logs_thread.detach();
+        }
+
+        void ServerOptions::LogToFileThread(const std::string log_content) {
+            write_logs_mutex.lock();
+            try {
+                pandora::storage::AddFileContent(GetLogsFilePath(), log_content, true);
+            } catch(...) {
+                std::string error {};
+                error.append("Pandora could not write logs to the '" + GetLogsFilePath() + "' logs file.");
+                throw std::runtime_error(error);
+            }
+            write_logs_mutex.unlock();
         }
 
 } // namespace pandora
