@@ -100,7 +100,6 @@ namespace pandora {
             logs_file_path.append(pandora::server_constants::logs_directory_path + "/pandoralog-" + GetServerSessionID() + ".txt");
             SetLogsFilePath(logs_file_path);
             pandora::storage::AddFileContent(GetLogsFilePath(), "", false);
-            ConsoleLog("Logs will be recorded at file: " + GetLogsFilePath());
         }
 
         void ServerOptions::LogToFile(pandora::server_utilities::RequestData& request_data) {
@@ -121,12 +120,30 @@ namespace pandora {
             write_logs_mutex.unlock();
         }
 
-        void ServerOptions::LogTransactionStartedFinished(pandora::server_utilities::RequestData& request_data, int server_code) {
+        void ServerOptions::LogTransactionStartedFinished(int server_code, pandora::server_utilities::RequestData& request_data) {
             std::string log {};
             log.append("[" + request_data.transaction_id + "] ");
-            log.append(server_code == server_constants::TransactionStarted ? "Transaction Started (1) " : "Transaction Finished (0) ");
-            log.append("-> " + request_data.http_method + " " + request_data.request_path);
+            log.append(server_code == server_constants::TransactionStartedCode ? "Started (1) " : "Finished (0) ");
+            log.append(pandora::server_utilities::GetDateTimeString() + " -> " + request_data.http_method + " " + request_data.request_path);
             DebugLog(log, request_data.logs_stream);
+        }
+
+        void ServerOptions::LogInfo(pandora::server_utilities::RequestData& request_data) {
+            std::string log {};
+            log.append("[" + request_data.transaction_id + "] ");
+            log.append("Info (" + std::to_string(pandora::server_constants::TransactionInfoCode) + ") " + pandora::server_utilities::GetDateTimeString() + " -> " + request_data.log);
+            DebugLog(log, request_data.logs_stream);
+        }
+
+        void ServerOptions::LogError(int error_code, pandora::server_utilities::RequestData& request_data) {
+            std::string log {};
+            log.append("[" + request_data.transaction_id + "] ");
+            log.append("Error (" + std::to_string(error_code) + ") " + pandora::server_utilities::GetDateTimeString() + " -> " + request_data.log);
+            DebugLog(log, request_data.logs_stream);
+            LogToFile(request_data);
+            std::string error {};
+            error.append(std::to_string(error_code) + "-Error " + "[" + request_data.transaction_id + "]" + ": " + request_data.log);
+            throw std::runtime_error(error);
         }
 
 } // namespace pandora

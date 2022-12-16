@@ -44,22 +44,27 @@ namespace pandora {
         // Endpoint | Arguments: element_container_name
         std::shared_ptr<httpserver::http_response> CreateElementContainerEndpoint::render_PUT(const httpserver::http_request& request) {
 
-            pandora::server_utilities::RequestData request_data(pandora::server_utilities::GenerateTransactionID(),
+            try {
+
+                pandora::server_utilities::RequestData request_data(pandora::server_utilities::GenerateTransactionID(),
                                                                 std::string(request.get_path()), pandora::server_constants::http_put);
-            request_data.arguments[pandora::server_constants::element_container_name] = request.get_arg(pandora::server_constants::element_container_name);
+                request_data.arguments[pandora::server_constants::element_container_name] = request.get_arg(pandora::server_constants::element_container_name);
+                m_server_options->LogTransactionStartedFinished(pandora::server_constants::TransactionStartedCode, request_data);
 
-            m_server_options->LogTransactionStartedFinished(request_data, pandora::server_constants::TransactionStarted);
-            
-            pandora::core::CreateElementContainer(m_main_cache, m_server_options, request_data);
+                pandora::core::CreateElementContainer(m_main_cache, m_server_options, request_data);
 
-            std::string response {};
-            response.append("Element Container '" + request_data.arguments[pandora::server_constants::element_container_name] + "' was created.");
+                m_server_options->LogTransactionStartedFinished(pandora::server_constants::TransactionFinishedCode, request_data);
+                m_server_options->LogToFile(request_data);
+                
+                std::string response {};
+                response.append("Element Container '" + request_data.arguments[pandora::server_constants::element_container_name] + "' was created succesfully.");
+                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(response, 200, "text/plain"));
 
-            m_server_options->LogTransactionStartedFinished(request_data, pandora::server_constants::TransactionFinished);
+            } catch(std::runtime_error error) {
+                std::string error_response {std::string(error.what())};
+                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(error_response, 500, "text/plain"));
+            }
 
-            m_server_options->LogToFile(request_data);
-            
-            return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }
         // ******************** END ***********************
 

@@ -118,6 +118,19 @@ namespace pandora {
             return transaction_id;
         }
 
+        std::string GetDateTimeString() {
+            // DateTime as string
+            std::string date_time_string {};
+            DateTime date_time = GetDateTime();
+            date_time_string.append(date_time.month + "/" +
+                                    date_time.day + "/" + 
+                                    date_time.year + " " +
+                                    date_time.hours + ":" +
+                                    date_time.minutes + ":" +
+                                    date_time.seconds);
+            return date_time_string;
+        }
+
     }
 
 } // namespace pandora

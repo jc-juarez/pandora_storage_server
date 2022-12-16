@@ -56,7 +56,9 @@ namespace pandora {
             void CreateLogsFile();
             void LogToFile(pandora::server_utilities::RequestData&);
             void LogToFileThread(const std::string);
-            void LogTransactionStartedFinished(pandora::server_utilities::RequestData&, int);
+            void LogTransactionStartedFinished(int, pandora::server_utilities::RequestData&);
+            void LogInfo(pandora::server_utilities::RequestData&);
+            void LogError(int, pandora::server_utilities::RequestData&);
 
     };
 

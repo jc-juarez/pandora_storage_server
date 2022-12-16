@@ -58,15 +58,17 @@ int main(int argc, char** argv) {
 
     // Server startup messages
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";
-    server_options.ConsoleLog("Debug mode: " + (server_options.GetDebugEnabled() ? std::string("Enabled") : std::string("Disabled")));
-    server_options.ConsoleLog("Logs: " + (server_options.GetLogsEnabled() ? std::string("Enabled") : std::string("Disabled")));
-    server_options.ConsoleLog("Server Session ID: " + server_options.GetServerSessionID());
+    std::cout << "<> Debug mode: " << (server_options.GetDebugEnabled() ? std::string("Enabled") : std::string("Disabled")) << "\n";
+    std::cout << "<> Logs: " + (server_options.GetLogsEnabled() ? std::string("Enabled") : std::string("Disabled")) << "\n";;
+    std::cout << "<> Server Session ID: " + server_options.GetServerSessionID() << "\n";
     
     // Logs file
-    if(server_options.GetLogsEnabled()) server_options.CreateLogsFile();
+    if(server_options.GetLogsEnabled()) {
+        server_options.CreateLogsFile();
+        std::cout << "<> Logs will be recorded at file: " << server_options.GetLogsFilePath() << "\n";
+    }
 
-    if(server_options.GetDebugEnabled()) std::cout << "\n";
-    std::cout << "* Running on port: " << server_options.GetPortNumber() << "\n\n";
+    std::cout << "\n* Running on port: " << server_options.GetPortNumber() << "\n\n";
 
     // Run forever
     for(;;) {}

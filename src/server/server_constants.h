@@ -37,9 +37,12 @@ namespace pandora {
         inline const std::string element_containers_directory_path {"/var/lib/pandora/storage/element-containers"};
 
         // Server Codes
-        inline constexpr int TransactionStarted {0};
-        inline constexpr int TransactionFinished {1};
-        inline constexpr int TransactionInfo {2};
+        // Regular Codes
+        inline constexpr int TransactionStartedCode {0};
+        inline constexpr int TransactionFinishedCode {1};
+        inline constexpr int TransactionInfoCode {100};
+        //Error Codes
+        inline constexpr int ElementContainerExistsErrorCode {900};
 
         // Endpoints URLs
         // Element Container

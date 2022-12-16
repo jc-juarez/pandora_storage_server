@@ -7,7 +7,6 @@
 // *************************************
 
 #include "element_container_cache.h"
-#include <iostream>
 
 namespace pandora {
 
@@ -15,6 +14,6 @@ namespace pandora {
 
     ElementContainerCache::ElementContainerCache() {}
 
-    void ElementContainerCache::InitialLiveMemoryFilling() { std::cout << "Works from Live Memory!"; }
+    void ElementContainerCache::InitialLiveMemoryFilling() {}
 
 }

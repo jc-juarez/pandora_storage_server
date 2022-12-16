@@ -33,13 +33,17 @@ namespace pandora {
 
             for (const auto & entry : std::filesystem::directory_iterator(pandora::server_constants::element_containers_directory_path)) {
                 if(std::string(entry.path()) == element_container_path) {
-                    server_options->DebugLog("Element Container already exists.", request_data.logs_stream);
-                    server_options->LogToFile(request_data);
-                    throw std::runtime_error("");
+                    request_data.log.clear();
+                    request_data.log.append("Element Container '" + request_data.arguments[pandora::server_constants::element_container_name] + "' already exists.");
+                    server_options->LogError(pandora::server_constants::ElementContainerExistsErrorCode, request_data);
                 }
             }
             
             storage::AddFileContent(element_container_path, "", false);
+
+            request_data.log.clear();
+            request_data.log.append("Element Container '" + request_data.arguments[pandora::server_constants::element_container_name] + "' created succesfully.");
+            server_options->LogInfo(request_data);
 
             pandora::ElementContainerCache::delete_element_container_mutex.unlock_shared();
         }
