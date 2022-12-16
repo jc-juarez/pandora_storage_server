@@ -93,7 +93,7 @@ namespace pandora {
             pandora::utilities::CreateDirectory(pandora::constants::storage_directory_path);
             // Create logs directory
             pandora::utilities::CreateDirectory(pandora::constants::logs_directory_path);
-            // Create elements storage directory
+            // Create element containers storage directory
             pandora::utilities::CreateDirectory(pandora::constants::element_containers_directory_path);
         }
 
