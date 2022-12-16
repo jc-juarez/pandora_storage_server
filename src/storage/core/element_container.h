@@ -19,7 +19,7 @@ namespace pandora {
 
     namespace core {
 
-        void CreateElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::server_utilities::RequestData&);
+        void CreateElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
 
     }
 

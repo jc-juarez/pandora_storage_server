@@ -24,12 +24,12 @@ int main(int argc, char** argv) {
     if(getuid()) throw std::runtime_error("Pandora could not start without root user privileges. Run the process as root.");
 
     // Initial server configuration
-    pandora::ServerOptions server_options(pandora::server_constants::default_port_number,
-                                          pandora::server_constants::default_debug_enabled,
-                                          pandora::server_constants::default_logs_enabled);
+    pandora::ServerOptions server_options(pandora::constants::default_port_number,
+                                          pandora::constants::default_debug_enabled,
+                                          pandora::constants::default_logs_enabled);
 
     // Server Session ID
-    server_options.SetServerSessionID(pandora::server_utilities::GenerateServerSessionID());
+    server_options.SetServerSessionID(pandora::utilities::GenerateServerSessionID());
 
     // Command-line arguments for server startup override
     // p={Port Number: #} d={Debug enabled: off} l={Logs enabled: off}
@@ -38,20 +38,20 @@ int main(int argc, char** argv) {
 
     // Server creation
     httpserver::webserver pandora_storage_server = httpserver::create_webserver(server_options.GetPortNumber())
-                               .not_found_resource(pandora::server_endpoints::resource_not_found)
-                               .method_not_allowed_resource(pandora::server_endpoints::method_not_allowed);
+                               .not_found_resource(pandora::endpoints::resource_not_found)
+                               .method_not_allowed_resource(pandora::endpoints::method_not_allowed);
 
     // Storage Core: Main Cache creation
     std::shared_ptr<pandora::ElementContainerCache> main_cache = std::make_shared<pandora::ElementContainerCache>();
 
     // Server Endpoints Referencing
-    pandora::server_utilities::SetEndpoints(pandora_storage_server, main_cache, server_options);
+    pandora::utilities::SetEndpoints(pandora_storage_server, main_cache, server_options);
     
     // Start Pandora Storage Server in non-blocking mode
     pandora_storage_server.start(false);
 
     // Create Pandora's directories
-    pandora::server_utilities::CreateBaseDirectories();
+    pandora::utilities::CreateBaseDirectories();
 
     // Initial Live Memory Filling
     main_cache->InitialLiveMemoryFilling();

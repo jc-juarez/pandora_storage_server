@@ -21,7 +21,7 @@ namespace pandora {
 
     class ServerOptions;
 
-    namespace server_utilities {
+    namespace utilities {
 
         struct RequestData {
             std::string transaction_id {};

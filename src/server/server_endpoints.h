@@ -16,7 +16,7 @@
 
 namespace pandora {
 
-    namespace server_endpoints {
+    namespace endpoints {
 
         // Resource not found
         std::shared_ptr<httpserver::http_response> resource_not_found(const httpserver::http_request&);

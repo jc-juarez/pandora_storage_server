@@ -17,7 +17,7 @@
 
 namespace pandora {
 
-    namespace server_endpoints {
+    namespace endpoints {
         
         // Resource not found
         std::shared_ptr<httpserver::http_response> resource_not_found(const httpserver::http_request& request) {
@@ -46,18 +46,18 @@ namespace pandora {
 
             try {
 
-                pandora::server_utilities::RequestData request_data(pandora::server_utilities::GenerateTransactionID(),
-                                                                std::string(request.get_path()), pandora::server_constants::http_put);
-                request_data.arguments[pandora::server_constants::element_container_name] = request.get_arg(pandora::server_constants::element_container_name);
-                m_server_options->LogTransactionStartedFinished(pandora::server_constants::TransactionStartedCode, request_data);
+                pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+                                                                std::string(request.get_path()), pandora::constants::http_put);
+                request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
 
                 pandora::core::CreateElementContainer(m_main_cache, m_server_options, request_data);
 
-                m_server_options->LogTransactionStartedFinished(pandora::server_constants::TransactionFinishedCode, request_data);
+                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
                 m_server_options->LogToFile(request_data);
                 
                 std::string response {};
-                response.append("Element Container '" + request_data.arguments[pandora::server_constants::element_container_name] + "' was created succesfully.");
+                response.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
                 return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(response, 200, "text/plain"));
 
             } catch(std::runtime_error error) {
@@ -78,13 +78,13 @@ namespace pandora {
         std::shared_ptr<httpserver::http_response> DeleteElementContainerEndpoint::render_DELETE(const httpserver::http_request& request) {
             
             std::string transaction_id {};
-            transaction_id.append(pandora::server_utilities::GetRandomString_Size8() + "-" + pandora::server_utilities::GetRandomString_Size8());
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            transaction_id.append(pandora::utilities::GetRandomString_Size8() + "-" + pandora::utilities::GetRandomString_Size8());
+            //pandora::utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             
             std::string response {"DELETE from"};
             response.append("Delete Elements Container");
 
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            //pandora::utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }
         // ******************** END ***********************
@@ -99,13 +99,13 @@ namespace pandora {
         std::shared_ptr<httpserver::http_response> SetElementEndpoint::render_POST(const httpserver::http_request& request) {
             
             std::string transaction_id {};
-            transaction_id.append(pandora::server_utilities::GetRandomString_Size8() + "-" + pandora::server_utilities::GetRandomString_Size8());
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            transaction_id.append(pandora::utilities::GetRandomString_Size8() + "-" + pandora::utilities::GetRandomString_Size8());
+            //pandora::utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             
             std::string response {"DELETE from"};
             response.append("Set Element");
 
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            //pandora::utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }
         // ******************** END ***********************
@@ -120,13 +120,13 @@ namespace pandora {
         std::shared_ptr<httpserver::http_response> GetElementEndpoint::render_GET(const httpserver::http_request& request) {
             
             std::string transaction_id {};
-            transaction_id.append(pandora::server_utilities::GetRandomString_Size8() + "-" + pandora::server_utilities::GetRandomString_Size8());
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            transaction_id.append(pandora::utilities::GetRandomString_Size8() + "-" + pandora::utilities::GetRandomString_Size8());
+            //pandora::utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             
             std::string response {"DELETE from"};
             response.append("Get Element");
 
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            //pandora::utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }
         // ******************** END ***********************
@@ -141,13 +141,13 @@ namespace pandora {
         std::shared_ptr<httpserver::http_response> DeleteElementEndpoint::render_DELETE(const httpserver::http_request& request) {
             
             std::string transaction_id {};
-            transaction_id.append(pandora::server_utilities::GetRandomString_Size8() + "-" + pandora::server_utilities::GetRandomString_Size8());
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            transaction_id.append(pandora::utilities::GetRandomString_Size8() + "-" + pandora::utilities::GetRandomString_Size8());
+            //pandora::utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             
             std::string response {"DELETE from"};
             response.append("Delete Element");
 
-            //pandora::server_utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
+            //pandora::utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
             return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
         }
         // ******************** END ***********************

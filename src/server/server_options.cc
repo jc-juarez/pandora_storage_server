@@ -71,14 +71,14 @@ namespace pandora {
                 std::string option_value {command.substr(option_value_index)};
 
                 switch (command_option) {
-                    case pandora::server_constants::port_number_option :
+                    case pandora::constants::port_number_option :
                         SetPortNumber(std::stoi(option_value));
                         break;
-                    case pandora::server_constants::debug_enabled_option :
-                        if(option_value == pandora::server_constants::off_option) SetDebugEnabled(false);
+                    case pandora::constants::debug_enabled_option :
+                        if(option_value == pandora::constants::off_option) SetDebugEnabled(false);
                         break;
-                    case pandora::server_constants::logs_enabled_option :
-                        if(option_value == pandora::server_constants::off_option) SetLogsEnabled(false);
+                    case pandora::constants::logs_enabled_option :
+                        if(option_value == pandora::constants::off_option) SetLogsEnabled(false);
                         break;
                 }
 
@@ -97,12 +97,12 @@ namespace pandora {
 
         void ServerOptions::CreateLogsFile() {
             std::string logs_file_path {};
-            logs_file_path.append(pandora::server_constants::logs_directory_path + "/pandoralog-" + GetServerSessionID() + ".txt");
+            logs_file_path.append(pandora::constants::logs_directory_path + "/pandoralog-" + GetServerSessionID() + ".txt");
             SetLogsFilePath(logs_file_path);
             pandora::storage::AddFileContent(GetLogsFilePath(), "", false);
         }
 
-        void ServerOptions::LogToFile(pandora::server_utilities::RequestData& request_data) {
+        void ServerOptions::LogToFile(pandora::utilities::RequestData& request_data) {
             std::string log_content {request_data.logs_stream.str()};
             std::thread write_logs_thread(&ServerOptions::LogToFileThread, this, log_content);
             write_logs_thread.detach();
@@ -120,25 +120,25 @@ namespace pandora {
             write_logs_mutex.unlock();
         }
 
-        void ServerOptions::LogTransactionStartedFinished(int server_code, pandora::server_utilities::RequestData& request_data) {
+        void ServerOptions::LogTransactionStartedFinished(int server_code, pandora::utilities::RequestData& request_data) {
             std::string log {};
             log.append("[" + request_data.transaction_id + "] ");
-            log.append(server_code == server_constants::TransactionStartedCode ? "Started (1) " : "Finished (0) ");
-            log.append(pandora::server_utilities::GetDateTimeString() + " -> " + request_data.http_method + " " + request_data.request_path);
+            log.append(server_code == constants::TransactionStartedCode ? "Started (1) " : "Finished (0) ");
+            log.append(pandora::utilities::GetDateTimeString() + " -> " + request_data.http_method + " " + request_data.request_path);
             DebugLog(log, request_data.logs_stream);
         }
 
-        void ServerOptions::LogInfo(pandora::server_utilities::RequestData& request_data) {
+        void ServerOptions::LogInfo(pandora::utilities::RequestData& request_data) {
             std::string log {};
             log.append("[" + request_data.transaction_id + "] ");
-            log.append("Info (" + std::to_string(pandora::server_constants::TransactionInfoCode) + ") " + pandora::server_utilities::GetDateTimeString() + " -> " + request_data.log);
+            log.append("Info (" + std::to_string(pandora::constants::TransactionInfoCode) + ") " + pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
             DebugLog(log, request_data.logs_stream);
         }
 
-        void ServerOptions::LogError(int error_code, pandora::server_utilities::RequestData& request_data) {
+        void ServerOptions::LogError(int error_code, pandora::utilities::RequestData& request_data) {
             std::string log {};
             log.append("[" + request_data.transaction_id + "] ");
-            log.append("Error (" + std::to_string(error_code) + ") " + pandora::server_utilities::GetDateTimeString() + " -> " + request_data.log);
+            log.append("Error (" + std::to_string(error_code) + ") " + pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
             DebugLog(log, request_data.logs_stream);
             LogToFile(request_data);
             std::string error {};

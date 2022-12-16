@@ -13,7 +13,7 @@
 
 namespace pandora {
 
-    namespace server_constants {
+    namespace constants {
 
         // Default options
         inline constexpr int default_port_number {5000};
