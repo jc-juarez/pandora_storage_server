@@ -33,7 +33,6 @@ namespace pandora {
 
             for (const auto& entry : std::filesystem::directory_iterator(pandora::constants::element_containers_directory_path)) {
                 if(std::string(entry.path()) == element_container_path) {
-                    request_data.log.clear();
                     request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' already exists.");
                     server_options->LogError(pandora::constants::ElementContainerExistsErrorCode, request_data);
                 }
@@ -41,7 +40,6 @@ namespace pandora {
             
             storage::AddFileContent(element_container_path, "", false);
 
-            request_data.log.clear();
             request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' created succesfully.");
             server_options->LogInfo(request_data);
 

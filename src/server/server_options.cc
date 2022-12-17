@@ -133,6 +133,7 @@ namespace pandora {
             log.append("[" + request_data.transaction_id + "] ");
             log.append("Info (" + std::to_string(pandora::constants::TransactionInfoCode) + ") " + pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
             DebugLog(log, request_data.logs_stream);
+            request_data.log.clear();
         }
 
         void ServerOptions::LogError(int error_code, pandora::utilities::RequestData& request_data) {
@@ -143,6 +144,7 @@ namespace pandora {
             LogToFile(request_data);
             std::string error {};
             error.append(std::to_string(error_code) + "-Error " + "[" + request_data.transaction_id + "]" + ": " + request_data.log);
+            request_data.log.clear();
             throw std::runtime_error(error);
         }
 

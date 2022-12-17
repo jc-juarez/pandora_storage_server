@@ -44,11 +44,13 @@ namespace pandora {
         // Endpoint | Arguments: element_container_name
         std::shared_ptr<httpserver::http_response> CreateElementContainerEndpoint::render_PUT(const httpserver::http_request& request) {
 
+            // Request Data creation
+            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+                                                         std::string(request.get_path()), pandora::constants::http_put);
+            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+
             try {
 
-                pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
-                                                                std::string(request.get_path()), pandora::constants::http_put);
-                request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
 
                 pandora::core::CreateElementContainer(m_main_cache, m_server_options, request_data);
@@ -56,13 +58,12 @@ namespace pandora {
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
                 m_server_options->LogToFile(request_data);
                 
-                std::string response {};
-                response.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
-                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(response, 200, "text/plain"));
+                request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
+                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(request_data.log, 200, "text/plain"));
 
             } catch(std::runtime_error error) {
-                std::string error_response {std::string(error.what())};
-                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(error_response, 500, "text/plain"));
+                request_data.log.append(std::string(error.what()));
+                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(request_data.log, 500, "text/plain"));
             }
 
         }
