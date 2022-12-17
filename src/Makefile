@@ -6,10 +6,10 @@
 # Contact: jc.juarezgarcia@outlook.com
 # *************************************
 
-pandora: main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o
+pandora: main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element.o
 	-rm -r build
 	mkdir build
-	g++ -std=c++17 main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o -o ./build/pandora -lhttpserver -pthread
+	g++ -std=c++17 main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element.o -o ./build/pandora -lhttpserver -pthread
 	rm *.o
 
 main.o: ./server/main.cc
@@ -32,6 +32,9 @@ element_container_cache.o: ./storage/core/live-memory/element_container_cache.cc
 
 element_container.o: ./storage/core/element_container.cc ./storage/core/element_container.h
 	g++ -std=c++17 -c ./storage/core/element_container.cc -lhttpserver -pthread
+
+element.o: ./storage/core/element.cc ./storage/core/element.h
+	g++ -std=c++17 -c ./storage/core/element.cc -lhttpserver -pthread
 
 clean:
 	-rm *.o

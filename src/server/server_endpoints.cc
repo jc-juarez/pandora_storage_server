@@ -7,6 +7,7 @@
 // *************************************
 
 #include "../storage/core/element_container.h"
+#include "../storage/core/element.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
 #include "server_constants.h"
@@ -27,6 +28,11 @@ namespace pandora {
         // HTTP Method not allowed
         std::shared_ptr<httpserver::http_response> method_not_allowed(const httpserver::http_request& request) {
             return std::shared_ptr<httpserver::string_response>(new httpserver::string_response("Pandora could not handle the requested HTTP method.", 405, "text/plain"));
+        }
+
+        // Response object wrapper
+        std::shared_ptr<httpserver::string_response> response(const std::string& response_string, int http_code) {
+            return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(response_string, http_code, "text/plain")); 
         }
 
         // Base Endpoint Constructor
@@ -53,17 +59,19 @@ namespace pandora {
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
 
+                pandora::utilities::ValidateElementContainerName(request_data, m_server_options);
+
                 pandora::core::CreateElementContainer(m_main_cache, m_server_options, request_data);
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
                 m_server_options->LogToFile(request_data);
                 
                 request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
-                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(request_data.log, 200, "text/plain"));
+                return response(request_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
                 request_data.log.append(std::string(error.what()));
-                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(request_data.log, 500, "text/plain"));
+                return response(request_data.log, pandora::constants::http_internal_error);
             }
 
         }
@@ -75,7 +83,7 @@ namespace pandora {
         : BaseEndpoint(main_cache, server_options) 
         {}
 
-        // Endpoint
+        // Endpoint | Arguments: element_container_name
         std::shared_ptr<httpserver::http_response> DeleteElementContainerEndpoint::render_DELETE(const httpserver::http_request& request) {
             
             // Request Data creation
@@ -87,17 +95,19 @@ namespace pandora {
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
 
+                pandora::utilities::ValidateElementContainerName(request_data, m_server_options);
+
                 pandora::core::DeleteElementContainer(m_main_cache, m_server_options, request_data);
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
                 m_server_options->LogToFile(request_data);
                 
                 request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was deleted succesfully.");
-                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(request_data.log, 200, "text/plain"));
+                return response(request_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
                 request_data.log.append(std::string(error.what()));
-                return std::shared_ptr<httpserver::string_response>(new httpserver::string_response(request_data.log, 500, "text/plain"));
+                return response(request_data.log, pandora::constants::http_internal_error);
             }
 
         }
@@ -109,18 +119,37 @@ namespace pandora {
         : BaseEndpoint(main_cache, server_options) 
         {}
 
-        // Endpoint
+        // Endpoint | Arguments: element_container_name/element_id
         std::shared_ptr<httpserver::http_response> SetElementEndpoint::render_POST(const httpserver::http_request& request) {
             
-            std::string transaction_id {};
-            transaction_id.append(pandora::utilities::GetRandomString_Size8() + "-" + pandora::utilities::GetRandomString_Size8());
-            //pandora::utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
-            
-            std::string response {"DELETE from"};
-            response.append("Set Element");
+            // Request Data creation
+            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+                                                         std::string(request.get_path()), pandora::constants::http_post);
+            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+            request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
+            request_data.arguments[pandora::constants::element_value] = request.get_arg(pandora::constants::element_value);
 
-            //pandora::utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
-            return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
+            try {
+
+                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+
+                pandora::utilities::ValidateElementContainerName(request_data, m_server_options);
+                pandora::utilities::ValidateElementID(request_data, m_server_options);
+                pandora::utilities::ValidateElementValue(request_data, m_server_options);
+
+                pandora::core::SetElement(m_main_cache, m_server_options, request_data);
+
+                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
+                m_server_options->LogToFile(request_data);
+                
+                request_data.log.append("Element '" + request_data.arguments[pandora::constants::element_id] + "' was set succesfully.");
+                return response(request_data.log, pandora::constants::http_ok);
+
+            } catch(std::runtime_error error) {
+                request_data.log.append(std::string(error.what()));
+                return response(request_data.log, pandora::constants::http_internal_error);
+            }
+
         }
         // ******************** END ***********************
 

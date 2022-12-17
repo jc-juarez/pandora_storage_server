@@ -97,6 +97,30 @@ namespace pandora {
             pandora::utilities::CreateDirectory(pandora::constants::element_containers_directory_path);
         }
 
+        void ValidateElementContainerName(RequestData& request_data, pandora::ServerOptions* server_options) {
+            // Element Container name should not exceed ElementContainerNameMaxSize
+            if(request_data.arguments[pandora::constants::element_container_name].size() > pandora::constants::ElementContainerNameMaxSize) {
+                request_data.log.append("Element Container name exceeds max size of " + std::to_string(pandora::constants::ElementContainerNameMaxSize) + " characters.");
+                server_options->LogError(pandora::constants::ParameterOversizeErrorCode, request_data);
+            }
+        }
+
+        void ValidateElementID(RequestData& request_data, pandora::ServerOptions* server_options) {
+            // Element ID should not exceed ElementIDMaxSize
+            if(request_data.arguments[pandora::constants::element_id].size() > pandora::constants::ElementIDMaxSize) {
+                request_data.log.append("Element ID exceeds max size of " + std::to_string(pandora::constants::ElementIDMaxSize) + " characters.");
+                server_options->LogError(pandora::constants::ParameterOversizeErrorCode, request_data);
+            }
+        }
+
+        void ValidateElementValue(RequestData& request_data, pandora::ServerOptions* server_options) {
+            // Element value should not exceed ElementValueMaxSize
+            if(request_data.arguments[pandora::constants::element_value].size() > pandora::constants::ElementValueMaxSize) {
+                request_data.log.append("Element value exceeds max size of " + std::to_string(pandora::constants::ElementValueMaxSize) + " characters.");
+                server_options->LogError(pandora::constants::ParameterOversizeErrorCode, request_data);
+            }
+        }
+
         std::string GetRandomString_Size8() { return std::to_string(range_8(seed)); }
 
         std::string GenerateServerSessionID() {

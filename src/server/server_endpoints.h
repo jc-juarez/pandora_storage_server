@@ -24,6 +24,9 @@ namespace pandora {
         // HTTP Method not allowed
         std::shared_ptr<httpserver::http_response> method_not_allowed(const httpserver::http_request&);
 
+        // Response object wrapper
+        std::shared_ptr<httpserver::string_response> response(const std::string&, int);
+
         // Base Endpoint Class
         class BaseEndpoint : public httpserver::http_resource {
 

@@ -45,6 +45,9 @@ namespace pandora {
         void CreateDirectory(const std::filesystem::path);
         void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions&);
         void CreateBaseDirectories();
+        void ValidateElementContainerName(RequestData&, pandora::ServerOptions*);
+        void ValidateElementID(RequestData&, pandora::ServerOptions*);
+        void ValidateElementValue(RequestData&, pandora::ServerOptions*);
         DateTime GetDateTime();
         std::string GetRandomString_Size8();
         std::string GenerateServerSessionID();

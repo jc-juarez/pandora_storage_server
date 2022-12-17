@@ -6,8 +6,8 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#ifndef ELEMENTS_CONTAINER_H
-#define ELEMENTS_CONTAINER_H
+#ifndef ELEMENT_CONTAINER_H
+#define ELEMENT_CONTAINER_H
 
 #include "../../server/server_utilities.h"
 #include "live-memory/element_container_cache.h"
