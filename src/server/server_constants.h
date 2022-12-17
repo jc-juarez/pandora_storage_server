@@ -43,6 +43,7 @@ namespace pandora {
         inline constexpr int TransactionInfoCode {100};
         //Error Codes
         inline constexpr int ElementContainerExistsErrorCode {900};
+        inline constexpr int ElementContainerNotExistsErrorCode {901};
 
         // Endpoints URLs
         // Element Container
