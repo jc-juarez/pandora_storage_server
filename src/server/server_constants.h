@@ -42,7 +42,8 @@ namespace pandora {
 
         // Validation and Restrictions
         inline constexpr size_t ElementContainerNameMaxSize {100};
-        inline constexpr size_t ElementIDMaxSize {100};
+        inline constexpr size_t ElementContainerMaxElements {50000};
+        inline constexpr size_t ElementIDMaxSize {50};
         inline constexpr size_t ElementValueMaxSize {1000};
         inline const std::string element_delimeter {"<//>"};
 

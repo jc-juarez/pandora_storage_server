@@ -11,11 +11,15 @@
 
 #include "../../server/server_utilities.h"
 #include "live-memory/element_container_cache.h"
+#include <string>
 
 namespace pandora {
 
     namespace core {
 
+        bool MatchID(const std::string&, char*);
+        int GetElementLine(const std::string&, const std::string&);
+        void RemoveElement(int, const std::string&);
         void SetElement(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
 
     }
