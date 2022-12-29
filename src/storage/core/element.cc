@@ -34,7 +34,7 @@ namespace pandora {
 
             int line_number {};
 
-            const int max_element_size {pandora::constants::ElementIDMaxSize + pandora::constants::ElementValueMaxSize};
+            const int max_element_size {pandora::constants::ElementIDMaxSize + pandora::constants::element_delimeter.size() + pandora::constants::ElementValueMaxSize};
             char* line = new char[max_element_size];
             
             while(element_container_file.getline(line, max_element_size)) {
