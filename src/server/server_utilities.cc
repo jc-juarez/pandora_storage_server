@@ -47,8 +47,8 @@ namespace pandora {
             dt.year = std::to_string(1900 + ltm->tm_year);
             dt.month = std::to_string(1 + ltm->tm_mon);
             dt.day = std::to_string(ltm->tm_mday);
-            dt.hours = std::to_string(5+ltm->tm_hour);
-            dt.minutes = std::to_string(30+ltm->tm_min);
+            dt.hours = std::to_string(ltm->tm_hour);
+            dt.minutes = std::to_string(ltm->tm_min);
             dt.seconds = std::to_string(ltm->tm_sec);
 
             // Care for two digits for all data
