@@ -51,6 +51,8 @@ namespace pandora {
 
         void RemoveElement(int line_number, const std::string& element_container_path) {
 
+            if(line_number == -1) return;
+
             std::ifstream element_container_file;
             element_container_file.open(element_container_path);
 
