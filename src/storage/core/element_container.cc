@@ -47,7 +47,7 @@ namespace pandora {
             
             // Check for Element Container in Disk
             // Lock shared operation
-            pandora::ElementContainerCache::delete_element_container_mutex.lock_shared();
+            main_cache->LockSharedDeleteElementContainerOperation();
 
             // Element Container Path
             std::string element_container_path {pandora::constants::element_containers_directory_path};
@@ -81,7 +81,7 @@ namespace pandora {
             server_options->LogInfo(request_data);
 
             // Unlock shared operation
-            pandora::ElementContainerCache::delete_element_container_mutex.unlock_shared();
+            main_cache->UnlockSharedDeleteElementContainerOperation();
         }
 
         void DeleteElementContainer(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {
@@ -90,7 +90,7 @@ namespace pandora {
             
             // Check for Element Container in Disk
             // Lock exclusive operation
-            pandora::ElementContainerCache::delete_element_container_mutex.lock();
+            main_cache->LockExclusiveDeleteElementContainerOperation();
 
             // Element Container path
             std::string element_container_path {pandora::constants::element_containers_directory_path};
@@ -110,7 +110,7 @@ namespace pandora {
             server_options->LogInfo(request_data);
 
             // Unlock exclusive operation
-            pandora::ElementContainerCache::delete_element_container_mutex.unlock();
+            main_cache->UnlockExclusiveDeleteElementContainerOperation();
         }
 
     }

@@ -10,9 +10,15 @@
 
 namespace pandora {
 
-    std::shared_mutex ElementContainerCache::delete_element_container_mutex;
-
     ElementContainerCache::ElementContainerCache() {}
+
+    void ElementContainerCache::LockSharedDeleteElementContainerOperation() { m_delete_element_container_mutex.lock_shared(); }
+
+    void ElementContainerCache::UnlockSharedDeleteElementContainerOperation() { m_delete_element_container_mutex.unlock_shared(); }
+
+    void ElementContainerCache::LockExclusiveDeleteElementContainerOperation() { m_delete_element_container_mutex.lock(); }
+
+    void ElementContainerCache::UnlockExclusiveDeleteElementContainerOperation() { m_delete_element_container_mutex.unlock(); }
 
     void ElementContainerCache::InitialLiveMemoryFilling() {}
 

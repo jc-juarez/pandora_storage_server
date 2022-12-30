@@ -86,6 +86,11 @@ namespace pandora {
         }
 
         void ValidateElementContainerName(RequestData& request_data, pandora::ServerOptions* server_options) {
+            // Element Container name should not be empty
+            if(request_data.arguments[pandora::constants::element_container_name].empty()) {
+                request_data.log.append("Element Container name cannot be empty.");
+                server_options->LogError(pandora::constants::ParameterEmptyErrorCode, request_data);
+            }
             // Element Container name should not exceed ElementContainerNameMaxSize
             if(request_data.arguments[pandora::constants::element_container_name].size() > pandora::constants::ElementContainerNameMaxSize) {
                 request_data.log.append("Element Container name exceeds max size of " + std::to_string(pandora::constants::ElementContainerNameMaxSize) + " characters.");
@@ -94,6 +99,11 @@ namespace pandora {
         }
 
         void ValidateElementID(RequestData& request_data, pandora::ServerOptions* server_options) {
+            // Element ID should not be empty
+            if(request_data.arguments[pandora::constants::element_id].empty()) {
+                request_data.log.append("Element ID cannot be empty.");
+                server_options->LogError(pandora::constants::ParameterEmptyErrorCode, request_data);
+            }
             // Element ID should not exceed ElementIDMaxSize
             if(request_data.arguments[pandora::constants::element_id].size() > pandora::constants::ElementIDMaxSize) {
                 request_data.log.append("Element ID exceeds max size of " + std::to_string(pandora::constants::ElementIDMaxSize) + " characters.");
@@ -102,9 +112,14 @@ namespace pandora {
         }
 
         void ValidateElementValue(RequestData& request_data, pandora::ServerOptions* server_options) {
-            // Element value should not exceed ElementValueMaxSize
+            // Element Value should not be empty
+            if(request_data.arguments[pandora::constants::element_value].empty()) {
+                request_data.log.append("Element Value cannot be empty.");
+                server_options->LogError(pandora::constants::ParameterEmptyErrorCode, request_data);
+            }
+            // Element Value should not exceed ElementValueMaxSize
             if(request_data.arguments[pandora::constants::element_value].size() > pandora::constants::ElementValueMaxSize) {
-                request_data.log.append("Element value exceeds max size of " + std::to_string(pandora::constants::ElementValueMaxSize) + " characters.");
+                request_data.log.append("Element Value exceeds max size of " + std::to_string(pandora::constants::ElementValueMaxSize) + " characters.");
                 server_options->LogError(pandora::constants::ParameterOversizeErrorCode, request_data);
             }
         }

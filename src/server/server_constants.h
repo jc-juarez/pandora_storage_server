@@ -60,7 +60,9 @@ namespace pandora {
         inline constexpr int ElementContainerExistsErrorCode {900};
         inline constexpr int ElementContainerNotExistsErrorCode {901};
         inline constexpr int ElementContainerFull {902};
+        inline constexpr int ElementNotExists {915};
         inline constexpr int ParameterOversizeErrorCode {930};
+        inline constexpr int ParameterEmptyErrorCode {931};
         inline constexpr int ElementStorageError {960};
 
         // Endpoints URLs

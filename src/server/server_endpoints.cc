@@ -71,8 +71,8 @@ namespace pandora {
 
             } catch(std::runtime_error error) {
 
-                // Unlock all mutex locks related to this operation
-                pandora::ElementContainerCache::delete_element_container_mutex.unlock_shared();
+                // Unlock all locks related to this operation
+                m_main_cache->UnlockSharedDeleteElementContainerOperation();
 
                 request_data.log.append(std::string(error.what()));
                 return response(request_data.log, pandora::constants::http_internal_error);
@@ -112,7 +112,7 @@ namespace pandora {
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
-                pandora::ElementContainerCache::delete_element_container_mutex.unlock();
+                m_main_cache->UnlockExclusiveDeleteElementContainerOperation();
                 
                 request_data.log.append(std::string(error.what()));
                 return response(request_data.log, pandora::constants::http_internal_error);
@@ -127,7 +127,7 @@ namespace pandora {
         : BaseEndpoint(main_cache, server_options) 
         {}
 
-        // Endpoint | Arguments: element_container_name/element_id
+        // Endpoint | Arguments: element_container_name/element_id/element_value
         std::shared_ptr<httpserver::http_response> SetElementEndpoint::render_POST(const httpserver::http_request& request) {
             
             // Request Data creation
@@ -156,7 +156,7 @@ namespace pandora {
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
-                pandora::ElementContainerCache::delete_element_container_mutex.unlock_shared();
+                m_main_cache->UnlockSharedDeleteElementContainerOperation();
 
                 request_data.log.append(std::string(error.what()));
                 return response(request_data.log, pandora::constants::http_internal_error);
@@ -171,18 +171,39 @@ namespace pandora {
         : BaseEndpoint(main_cache, server_options) 
         {}
 
-        // Endpoint
+        // Endpoint | Arguments: element_container_name/element_id
         std::shared_ptr<httpserver::http_response> GetElementEndpoint::render_GET(const httpserver::http_request& request) {
             
-            std::string transaction_id {};
-            transaction_id.append(pandora::utilities::GetRandomString_Size8() + "-" + pandora::utilities::GetRandomString_Size8());
-            //pandora::utilities::ConsoleLog(std::string("Transaction Initiated (0) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
-            
-            std::string response {"DELETE from"};
-            response.append("Get Element");
+            // Request Data creation
+            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+                                                         std::string(request.get_path()), pandora::constants::http_get);
+            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+            request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
 
-            //pandora::utilities::ConsoleLog(std::string("Transaction Finished (1) -> [") + transaction_id + std::string("] GET ") + std::string(request.get_path()));
-            return std::shared_ptr<httpserver::http_response>(new httpserver::string_response(static_cast<httpserver::string_response>(response)));
+            try {
+
+                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+
+                pandora::utilities::ValidateElementContainerName(request_data, m_server_options);
+                pandora::utilities::ValidateElementID(request_data, m_server_options);
+
+                std::string element_value = pandora::core::GetElement(m_main_cache, m_server_options, request_data);
+
+                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
+                m_server_options->LogToFile(request_data);
+                
+                request_data.log.append(element_value);
+                return response(request_data.log, pandora::constants::http_ok);
+
+            } catch(std::runtime_error error) {
+
+                // Unlock all mutex locks related to this operation
+                m_main_cache->UnlockSharedDeleteElementContainerOperation();
+
+                request_data.log.append(std::string(error.what()));
+                return response(request_data.log, pandora::constants::http_internal_error);
+            }
+
         }
         // ******************** END ***********************
 

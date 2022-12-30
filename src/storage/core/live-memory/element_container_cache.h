@@ -15,13 +15,21 @@ namespace pandora {
 
     class ElementContainerCache {
 
-        // Static members
-        public:
-            static std::shared_mutex delete_element_container_mutex;
-
         // Constructor
         public:
             ElementContainerCache();
+
+        // Mutex Locks
+        private:
+            std::shared_mutex m_delete_element_container_mutex;
+
+        // Mutex Operations
+        public:
+            // Delete Element Container
+            void LockSharedDeleteElementContainerOperation();
+            void UnlockSharedDeleteElementContainerOperation();
+            void LockExclusiveDeleteElementContainerOperation();
+            void UnlockExclusiveDeleteElementContainerOperation();
 
         // Cache System
         public:
