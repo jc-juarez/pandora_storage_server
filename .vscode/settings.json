@@ -1,6 +1,8 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
+        "iosfwd": "cpp",
+        "new": "cpp",
         "array": "cpp",
         "bit": "cpp",
         "*.tcc": "cpp",
@@ -29,13 +31,13 @@
         "functional": "cpp",
         "initializer_list": "cpp",
         "iomanip": "cpp",
-        "iosfwd": "cpp",
         "iostream": "cpp",
         "istream": "cpp",
         "limits": "cpp",
         "memory": "cpp",
         "memory_resource": "cpp",
-        "new": "cpp",
+        "mutex": "cpp",
+        "numeric": "cpp",
         "optional": "cpp",
         "ostream": "cpp",
         "ratio": "cpp",
@@ -51,8 +53,6 @@
         "type_traits": "cpp",
         "tuple": "cpp",
         "typeinfo": "cpp",
-        "utility": "cpp",
-        "numeric": "cpp",
-        "mutex": "cpp"
+        "utility": "cpp"
     }
 }
