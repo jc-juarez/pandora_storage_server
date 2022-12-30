@@ -7,12 +7,12 @@
 // *************************************
 
 #include "../storage/core/live-memory/element_container_cache.h"
+#include "../storage/storage.h"
 #include "server_utilities.h"
 #include "server_endpoints.h"
 #include "server_constants.h"
 #include "server_options.h"
 #include <httpserver.hpp>
-#include <filesystem>
 #include <iostream>
 #include <random>
 #include <string>
@@ -25,16 +25,6 @@ namespace pandora {
         static std::random_device rd;
         static std::mt19937 seed(rd());
         static std::uniform_int_distribution<int> range_8(10000000, 99999999);
-
-        void CreateDirectory(const std::filesystem::path path) {
-            try {
-                std::filesystem::create_directories(path);
-            } catch(...) {
-                std::string error {};
-                error.append("Pandora could not create the " + std::string(path) + " directory.");
-                throw std::runtime_error(error);
-            }
-        }
 
         DateTime GetDateTime() {
             int two_digits {2};
@@ -88,13 +78,11 @@ namespace pandora {
 
         void CreateBaseDirectories() {
             // Create Pandora Storage Server directory
-            pandora::utilities::CreateDirectory(pandora::constants::pandora_directory_path);
-            // Create main storage directory
-            pandora::utilities::CreateDirectory(pandora::constants::storage_directory_path);
+            pandora::storage::CreateDirectory(pandora::constants::pandora_directory_path);
             // Create logs directory
-            pandora::utilities::CreateDirectory(pandora::constants::logs_directory_path);
+            pandora::storage::CreateDirectory(pandora::constants::logs_directory_path);
             // Create element containers storage directory
-            pandora::utilities::CreateDirectory(pandora::constants::element_containers_directory_path);
+            pandora::storage::CreateDirectory(pandora::constants::element_containers_directory_path);
         }
 
         void ValidateElementContainerName(RequestData& request_data, pandora::ServerOptions* server_options) {

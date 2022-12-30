@@ -70,6 +70,10 @@ namespace pandora {
                 return response(request_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
+
+                // Unlock all mutex locks related to this operation
+                pandora::ElementContainerCache::delete_element_container_mutex.unlock_shared();
+
                 request_data.log.append(std::string(error.what()));
                 return response(request_data.log, pandora::constants::http_internal_error);
             }
@@ -106,6 +110,10 @@ namespace pandora {
                 return response(request_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
+
+                // Unlock all mutex locks related to this operation
+                pandora::ElementContainerCache::delete_element_container_mutex.unlock();
+                
                 request_data.log.append(std::string(error.what()));
                 return response(request_data.log, pandora::constants::http_internal_error);
             }

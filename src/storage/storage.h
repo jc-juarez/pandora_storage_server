@@ -16,6 +16,7 @@ namespace pandora {
 
     namespace storage {
 
+        void CreateDirectory(const std::filesystem::path);
         void AddFileContent(const std::string, const std::string, bool);
 
     }

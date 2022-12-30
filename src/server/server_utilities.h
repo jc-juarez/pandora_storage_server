@@ -12,7 +12,6 @@
 #include "../storage/core/live-memory/element_container_cache.h"
 #include <httpserver.hpp>
 #include <unordered_map>
-#include <filesystem>
 #include <sstream>
 #include <memory>
 #include <string>
@@ -42,7 +41,6 @@ namespace pandora {
             std::string seconds {};
         };
 
-        void CreateDirectory(const std::filesystem::path);
         void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions&);
         void CreateBaseDirectories();
         void ValidateElementContainerName(RequestData&, pandora::ServerOptions*);

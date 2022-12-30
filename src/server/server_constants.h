@@ -24,6 +24,7 @@ namespace pandora {
         inline constexpr int http_ok {200};
         inline constexpr int http_bad_request {400};
         inline constexpr int http_internal_error {500};
+        inline constexpr int element_container_size_index {1};
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};
         inline constexpr char logs_enabled_option {'l'};
@@ -35,14 +36,15 @@ namespace pandora {
         inline const std::string element_container_name {"element_container_name"};
         inline const std::string element_id {"element_id"};
         inline const std::string element_value {"element_value"};
+        inline const std::string storage {"storage"};
+        inline const std::string data {"data"};
         inline const std::string pandora_directory_path {"/var/lib/pandora"};
-        inline const std::string storage_directory_path {"/var/lib/pandora/storage"};
         inline const std::string logs_directory_path {"/var/lib/pandora/logs"};
-        inline const std::string element_containers_directory_path {"/var/lib/pandora/storage/element-containers"};
+        inline const std::string element_containers_directory_path {"/var/lib/pandora/element-containers"};
 
         // Validation and Restrictions
         inline constexpr size_t ElementContainerNameMaxSize {100};
-        inline constexpr size_t ElementContainerMaxElements {50000};
+        inline constexpr size_t ElementContainerMaxSize {50000};
         inline constexpr size_t ElementIDMaxSize {50};
         inline constexpr size_t ElementValueMaxSize {1000};
         inline const std::string element_delimeter {"<//>"};
@@ -55,7 +57,9 @@ namespace pandora {
         //Error Codes
         inline constexpr int ElementContainerExistsErrorCode {900};
         inline constexpr int ElementContainerNotExistsErrorCode {901};
+        inline constexpr int ElementContainerFull {902};
         inline constexpr int ParameterOversizeErrorCode {930};
+        inline constexpr int ElementStorageError {960};
 
         // Endpoints URLs
         // Element Container
