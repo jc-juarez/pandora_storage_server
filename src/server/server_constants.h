@@ -25,9 +25,11 @@ namespace pandora {
         inline constexpr int http_bad_request {400};
         inline constexpr int http_internal_error {500};
         inline constexpr int element_container_size_index {1};
+        inline constexpr int not_found_int {-1};
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};
         inline constexpr char logs_enabled_option {'l'};
+        inline const std::string not_found_string {""};
         inline const std::string off_option {"off"};
         inline const std::string http_put {"PUT"};
         inline const std::string http_post {"POST"};
@@ -44,7 +46,7 @@ namespace pandora {
 
         // Validation and Restrictions
         inline constexpr size_t ElementContainerNameMaxSize {100};
-        inline constexpr size_t ElementContainerMaxSize {50000};
+        inline constexpr size_t ElementContainerMaxCapacity {50000};
         inline constexpr size_t ElementIDMaxSize {50};
         inline constexpr size_t ElementValueMaxSize {1000};
         inline const std::string element_delimeter {"<//>"};

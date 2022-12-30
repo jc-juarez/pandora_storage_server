@@ -13,6 +13,7 @@
 #include "live-memory/element_container_cache.h"
 #include <filesystem>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <memory>
 #include <string>
@@ -20,6 +21,25 @@
 namespace pandora {
 
     namespace core {
+
+        std::string GetElementContainerData(int index, const std::string& element_container_data_path) {
+
+            std::ifstream element_container_data_file;
+            element_container_data_file.open(element_container_data_path);
+
+            std::string line {};
+            int element_container_current_size {};
+            int current_index {1};
+
+            while (std::getline(element_container_data_file, line)) {
+                if(current_index == index) {
+                    return line;
+                }
+                ++current_index;
+            }
+
+            return pandora::constants::not_found_string;
+        }
 
         void CreateElementContainer(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {
     

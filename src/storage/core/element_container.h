@@ -21,6 +21,7 @@ namespace pandora {
 
         void CreateElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
         void DeleteElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
+        std::string GetElementContainerData(int, const std::string&);
 
     }
 

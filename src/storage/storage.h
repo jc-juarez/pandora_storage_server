@@ -18,6 +18,7 @@ namespace pandora {
 
         void CreateDirectory(const std::filesystem::path);
         void AddFileContent(const std::string, const std::string, bool);
+        void ReplaceFileLine(int, const std::string&, const std::string = "");
 
     }
 
