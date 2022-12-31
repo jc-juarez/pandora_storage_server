@@ -21,11 +21,11 @@ namespace pandora {
         m_element_container_size = 0;
 
         m_element_container_path.append(pandora::constants::element_containers_directory_path + "/" + GetElementContainerName());
-        m_element_container_data_file_path.append(GetElementContainerPath + "/" + pandora::constants::data);
-        m_element_container_storage_file_path.append(GetElementContainerPath + "/" + pandora::constants::storage);
+        m_element_container_data_file_path.append(GetElementContainerPath() + "/" + pandora::constants::data);
+        m_element_container_storage_file_path.append(GetElementContainerPath() + "/" + pandora::constants::storage);
 
-        // If true, Element Container already exists on Disk and is being brought to Memory
-        if(std::filesystem::exists(m_element_container_data_file_path)) {
+        // If true, Element Container already exists on Disk and is being brought to Memory on server startup
+        if(std::filesystem::exists(GetElementContainerDataFilePath())) {
             // Recover Element Container Data
         }
 
@@ -46,7 +46,5 @@ namespace pandora {
     void ElementContainer::LockExclusiveElementOperations() { m_element_container_lock.lock(); }
 
     void ElementContainer::UnlockExclusiveElementOperations() { m_element_container_lock.unlock(); }
-
-
 
 } // namespace pandora
