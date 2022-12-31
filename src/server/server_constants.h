@@ -65,6 +65,11 @@ namespace pandora {
         inline constexpr int ParameterEmptyErrorCode {931};
         inline constexpr int ElementStorageError {960};
 
+        // Exception Messages
+        inline const std::string element_container_not_found {"element_container_not_found"};
+        inline const std::string element_container_data_file_not_found {"element_container_data_file_not_found"};
+        inline const std::string element_container_storage_file_not_found {"element_container_storage_file_not_found"};
+
         // Endpoints URLs
         // Element Container
         inline const std::string create_element_container_endpoint_url {"/pandora/create-element-container/{element_container_name}"};

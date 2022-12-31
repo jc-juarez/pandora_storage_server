@@ -9,7 +9,7 @@
 #ifndef SERVER_ENDPOINTS_H
 #define SERVER_ENDPOINTS_H
 
-#include "../storage/core/live-memory/element_container_cache.h"
+#include "../storage/core/main_data.h"
 #include "server_options.h"
 #include <httpserver.hpp>
 #include <memory>
@@ -32,12 +32,11 @@ namespace pandora {
 
             // Constructor
             public:
-                BaseEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+                BaseEndpoint(std::shared_ptr<pandora::MainData>&);
 
             // Dependencies
             public:
-                std::shared_ptr<pandora::ElementContainerCache> m_main_cache;
-                pandora::ServerOptions* m_server_options;
+                std::shared_ptr<pandora::MainData>& m_main_data;
 
         };
 
@@ -46,7 +45,7 @@ namespace pandora {
 
             // Constructor
             public:
-                CreateElementContainerEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+                CreateElementContainerEndpoint(std::shared_ptr<pandora::MainData>&);
 
             // Endpoint
             public:
@@ -59,7 +58,7 @@ namespace pandora {
 
             // Constructor
             public:
-                DeleteElementContainerEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+                DeleteElementContainerEndpoint(std::shared_ptr<pandora::MainData>&);
 
             // Endpoint
             public:
@@ -72,7 +71,7 @@ namespace pandora {
 
             // Constructor
             public:
-                SetElementEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+                SetElementEndpoint(std::shared_ptr<pandora::MainData>&);
             
             // Endpoint
             public:
@@ -85,7 +84,7 @@ namespace pandora {
 
             // Constructor
             public:
-                GetElementEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+                GetElementEndpoint(std::shared_ptr<pandora::MainData>&);
 
             // Endpoint
             public:
@@ -98,7 +97,7 @@ namespace pandora {
 
             // Constructor
             public:
-                DeleteElementEndpoint(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*);
+                DeleteElementEndpoint(std::shared_ptr<pandora::MainData>&);
 
             // Endpoint
             public:

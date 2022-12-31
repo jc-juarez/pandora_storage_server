@@ -6,7 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#include "../storage/core/live-memory/element_container_cache.h"
+#include "../storage/core/main_data.h"
 #include "../storage/storage.h"
 #include "server_utilities.h"
 #include "server_endpoints.h"
@@ -51,26 +51,26 @@ namespace pandora {
             return dt;
         }
 
-        void SetEndpoints(httpserver::webserver& pandora_storage_server, std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions& server_options) {
+        void SetEndpoints(httpserver::webserver& pandora_storage_server, std::shared_ptr<pandora::MainData>& main_data) {
 
             // Create Elements Container (PUT)
-            static pandora::endpoints::CreateElementContainerEndpoint create_element_container_endpoint(main_cache, &server_options);
+            static pandora::endpoints::CreateElementContainerEndpoint create_element_container_endpoint(main_data);
             RegisterEndpoint(pandora_storage_server, create_element_container_endpoint, pandora::constants::http_put, 
                                                         pandora::constants::create_element_container_endpoint_url);
             // Delete Elements Container (DELETE)
-            static pandora::endpoints::DeleteElementContainerEndpoint delete_element_container_endpoint(main_cache, &server_options);
+            static pandora::endpoints::DeleteElementContainerEndpoint delete_element_container_endpoint(main_data);
             RegisterEndpoint(pandora_storage_server, delete_element_container_endpoint, pandora::constants::http_delete, 
                                                         pandora::constants::delete_element_container_endpoint_url);
             // Set Element (POST)
-            static pandora::endpoints::SetElementEndpoint set_element_endpoint(main_cache, &server_options);
+            static pandora::endpoints::SetElementEndpoint set_element_endpoint(main_data);
             RegisterEndpoint(pandora_storage_server, set_element_endpoint, pandora::constants::http_post, 
                                                         pandora::constants::set_element_endpoint_url);
             // Get Element (GET)
-            static pandora::endpoints::GetElementEndpoint get_element_endpoint(main_cache, &server_options);
+            static pandora::endpoints::GetElementEndpoint get_element_endpoint(main_data);
             RegisterEndpoint(pandora_storage_server, get_element_endpoint, pandora::constants::http_get, 
                                                         pandora::constants::get_element_endpoint_url);
             // Delete Element (DELETE)
-            static pandora::endpoints::DeleteElementEndpoint delete_element_endpoint(main_cache, &server_options);
+            static pandora::endpoints::DeleteElementEndpoint delete_element_endpoint(main_data);
             RegisterEndpoint(pandora_storage_server, delete_element_endpoint, pandora::constants::http_delete, 
                                                         pandora::constants::delete_element_endpoint_url);
 

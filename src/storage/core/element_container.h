@@ -9,21 +9,45 @@
 #ifndef ELEMENT_CONTAINER_H
 #define ELEMENT_CONTAINER_H
 
-#include "../../server/server_utilities.h"
-#include "live-memory/element_container_cache.h"
-#include <sstream>
-#include <memory>
+#include <unordered_map>
 #include <string>
+#include <mutex>
 
 namespace pandora {
 
-    namespace core {
+    class ElementContainer {
 
-        void CreateElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
-        void DeleteElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
-        std::string GetElementContainerData(int, const std::string&);
+        // Constructor
+        public:
+            ElementContainer(const std::string&);
 
-    }
+        // Properties
+        private:
+            // General properties
+            std::string m_element_container_name;
+            int m_element_container_size;
+            // Paths
+            std::string m_element_container_path;
+            std::string m_element_container_data_file_path;
+            std::string m_element_container_storage_file_path;
+            // Locks
+            std::mutex m_element_container_lock;
+
+        // Getter Methods
+        public:
+            std::string GetElementContainerName() const;
+            int GetElementContainerSize() const;
+            std::string GetElementContainerPath() const;
+            std::string GetElementContainerDataFilePath() const;
+            std::string GetElementContainerStorageFilePath() const;
+
+        // Utilities Methods
+        public:
+            void UpdateElementContainerSize(int);
+            void LockExclusiveElementOperations();
+            void UnlockExclusiveElementOperations();
+
+    };
 
 } // namespace pandora
 

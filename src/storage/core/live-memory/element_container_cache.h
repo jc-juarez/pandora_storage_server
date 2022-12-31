@@ -9,7 +9,9 @@
 #ifndef ELEMENT_CONTAINER_CACHE_H
 #define ELEMENT_CONTAINER_CACHE_H
 
+#include <unordered_map>
 #include <shared_mutex>
+#include <string>
 
 namespace pandora {
 
@@ -21,6 +23,7 @@ namespace pandora {
 
         // Mutex Locks
         private:
+            std::unordered_map<std::string, std::shared_mutex> element_container_locks;
             std::shared_mutex m_delete_element_container_mutex;
 
         // Mutex Operations

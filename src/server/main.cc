@@ -6,7 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#include "../storage/core/live-memory/element_container_cache.h"
+#include "../storage/core/main_data.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
 #include "server_constants.h"
@@ -43,9 +43,11 @@ int main(int argc, char** argv) {
 
     // Storage Core: Main Cache creation
     std::shared_ptr<pandora::ElementContainerCache> main_cache = std::make_shared<pandora::ElementContainerCache>();
+    // Storage Core: Main Data creation
+    std::shared_ptr<pandora::MainData> main_data = std::make_shared<pandora::MainData>(main_cache, &server_options);
 
     // Server Endpoints Referencing
-    pandora::utilities::SetEndpoints(pandora_storage_server, main_cache, server_options);
+    pandora::utilities::SetEndpoints(pandora_storage_server, main_data);
     
     // Start Pandora Storage Server in non-blocking mode
     pandora_storage_server.start(false);
