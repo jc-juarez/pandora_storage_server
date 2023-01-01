@@ -16,13 +16,30 @@
 #include <utility>
 #include <memory>
 #include <string>
+#include <iostream>
 
 namespace pandora {
 
     MainData::MainData(std::shared_ptr<ElementContainerCache>& main_cache, ServerOptions* server_options) {
 
+        // Set dependencies
         m_main_cache = main_cache;
         m_server_options = server_options;
+
+        // Bring all Element Containers on Disk to Memory
+        for (const auto& element_container : std::filesystem::directory_iterator(pandora::constants::element_containers_directory_path)) {
+            
+            // Get Element Container Name
+            std::string element_container_path {element_container.path()};
+            int directory_split = element_container_path.find_last_of('/');
+            std::string element_container_name = element_container_path.substr(directory_split + 1);
+
+            AddElementContainer(element_container_name);
+
+        } 
+
+        // Delete along with <iostream>
+        for(auto& element_container_pair : m_element_containers) std::cout << "*******" << element_container_pair.second.GetElementContainerName() << std::endl;
 
     }
 
@@ -35,6 +52,13 @@ namespace pandora {
     void MainData::AddElementContainer(const std::string& element_container_name) {
 
         m_element_containers.emplace(element_container_name, element_container_name);
+
+    }
+
+    void MainData::DeleteElementContainer(const std::string& element_container_name) {
+
+        std::filesystem::remove_all(GetElementContainer(element_container_name).GetElementContainerPath());
+        m_element_containers.erase(element_container_name);
 
     }
 

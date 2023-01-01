@@ -79,7 +79,7 @@ namespace pandora {
 
     void ElementContainer::UpdateElementContainerSize(int size) {
         
-        pandora::storage::ReplaceFileLine(pandora::constants::element_container_size_index, GetElementContainerDataFilePath(), std::to_string(size));
+        pandora::storage::ReplaceFileLine(pandora::constants::element_container_size_index + 1, GetElementContainerDataFilePath(), std::to_string(size));
         m_element_container_size = size;
 
     }

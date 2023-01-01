@@ -31,17 +31,20 @@ namespace pandora {
             // Lock shared operation
             main_data->LockExclusiveElementContainerOperations();
 
+            // Element Container name
+            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+
             // Check if Element Container already exists
-            if(main_data->ElementContainerExists(request_data.arguments[pandora::constants::element_container_name])) {
-                request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' already exists.");
+            if(main_data->ElementContainerExists(element_container_name)) {
+                request_data.log.append("Element Container '" + element_container_name + "' already exists.");
                 main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerExistsErrorCode, request_data);
             }
             
             // Create Element Container
-            main_data->AddElementContainer(request_data.arguments[pandora::constants::element_container_name]);
+            main_data->AddElementContainer(element_container_name);
 
             // Log Element Container successful creation
-            request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
+            request_data.log.append("Element Container '" + element_container_name + "' was created succesfully.");
             main_data->GetServerOptions()->LogInfo(request_data);
 
             // Unlock shared operation
@@ -49,33 +52,33 @@ namespace pandora {
 
         }
 
-        void DeleteElementContainer(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {
+        void DeleteElementContainer(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
     
             // Check for Element Container in Live Memory
             
             // Check for Element Container in Disk
             // Lock exclusive operation
-            main_cache->LockExclusiveDeleteElementContainerOperation();
+            main_data->LockExclusiveElementContainerOperations();
 
-            // Element Container path
-            std::string element_container_path {pandora::constants::element_containers_directory_path};
-            element_container_path.append("/" + request_data.arguments[pandora::constants::element_container_name]);
+            // Element Container name
+            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
 
             // Check if Element Container does not exist
-            if(!std::filesystem::exists(element_container_path)) {
-                request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' does not exist and could not be deleted.");
-                server_options->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
+            if(!main_data->ElementContainerExists(element_container_name)) {
+                request_data.log.append("Element Container '" + element_container_name + "' does not exist and could not be deleted.");
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
             }
 
             // Delete Element Container
-            std::filesystem::remove_all(element_container_path);
+            main_data->DeleteElementContainer(element_container_name);
             
             // Log Element Container successful deletion
-            request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was deleted succesfully.");
-            server_options->LogInfo(request_data);
+            request_data.log.append("Element Container '" + element_container_name + "' was deleted succesfully.");
+            main_data->GetServerOptions()->LogInfo(request_data);
 
             // Unlock exclusive operation
-            main_cache->UnlockExclusiveDeleteElementContainerOperation();
+            main_data->UnlockExclusiveElementContainerOperations();
+
         }
 
     }

@@ -45,6 +45,7 @@ namespace pandora {
         public:
             // Utilities Methods
             void AddElementContainer(const std::string&);
+            void DeleteElementContainer(const std::string&);
             void LockExclusiveElementContainerOperations();
             void UnlockExclusiveElementContainerOperations();
             bool ElementContainerExists(const std::string&);

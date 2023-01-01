@@ -94,20 +94,16 @@ namespace pandora {
                                                          std::string(request.get_path()), pandora::constants::http_delete);
             request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
 
-            // Delete these lines
-            ServerOptions* m_server_options = m_main_data->GetServerOptions();
-            std::shared_ptr<ElementContainerCache> m_main_cache = m_main_data->GetMainCache();
-
             try {
 
-                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
 
-                pandora::utilities::ValidateElementContainerName(request_data, m_server_options);
+                pandora::utilities::ValidateElementContainerName(request_data, m_main_data->GetServerOptions());
 
-                pandora::core::DeleteElementContainer(m_main_cache, m_server_options, request_data);
+                pandora::core::DeleteElementContainer(m_main_data, request_data);
 
-                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
-                m_server_options->LogToFile(request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
+                m_main_data->GetServerOptions()->LogToFile(request_data);
                 
                 request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was deleted succesfully.");
                 return response(request_data.log, pandora::constants::http_ok);
@@ -115,7 +111,7 @@ namespace pandora {
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
-                m_main_cache->UnlockExclusiveDeleteElementContainerOperation();
+                m_main_data->UnlockExclusiveElementContainerOperations();
                 
                 request_data.log.append(std::string(error.what()));
                 return response(request_data.log, pandora::constants::http_internal_error);
