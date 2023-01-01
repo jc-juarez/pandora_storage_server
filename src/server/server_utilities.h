@@ -18,6 +18,7 @@
 
 namespace pandora {
 
+    class MainData;
     class ServerOptions;
 
     namespace utilities {
@@ -41,7 +42,7 @@ namespace pandora {
             std::string seconds {};
         };
 
-        void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions&);
+        void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::MainData>&);
         void CreateBaseDirectories();
         void ValidateElementContainerName(RequestData&, pandora::ServerOptions*);
         void ValidateElementID(RequestData&, pandora::ServerOptions*);

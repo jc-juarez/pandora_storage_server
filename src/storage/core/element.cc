@@ -117,8 +117,9 @@ namespace pandora {
             std::string element_container_data_path {element_container_path};
             element_container_data_path.append("/" + pandora::constants::data);
         
-            // Get Element Container current size
-            int element_container_current_size {std::stoi(GetElementContainerData(pandora::constants::element_container_size_index, element_container_data_path))};
+            // **********************REDO
+            // Get Element Container current size 
+            int element_container_current_size {0};
 
             // Check if Element Container exceeds capacity
             if(element_container_current_size == pandora::constants::ElementContainerMaxCapacity) {

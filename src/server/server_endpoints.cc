@@ -6,7 +6,7 @@
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
 
-#include "../storage/core/element_container.h"
+#include "../storage/core/element_container_operations.h"
 #include "../storage/core/element.h"
 #include "server_endpoints.h"
 #include "server_utilities.h"
@@ -94,6 +94,10 @@ namespace pandora {
                                                          std::string(request.get_path()), pandora::constants::http_delete);
             request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
 
+            // Delete these lines
+            ServerOptions* m_server_options = m_main_data->GetServerOptions();
+            std::shared_ptr<ElementContainerCache> m_main_cache = m_main_data->GetMainCache();
+
             try {
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
@@ -135,6 +139,10 @@ namespace pandora {
             request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
             request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
             request_data.arguments[pandora::constants::element_value] = request.get_arg(pandora::constants::element_value);
+
+            // Delete these lines
+            ServerOptions* m_server_options = m_main_data->GetServerOptions();
+            std::shared_ptr<ElementContainerCache> m_main_cache = m_main_data->GetMainCache();
 
             try {
 
@@ -179,6 +187,10 @@ namespace pandora {
             request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
             request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
 
+            // Delete these lines
+            ServerOptions* m_server_options = m_main_data->GetServerOptions();
+            std::shared_ptr<ElementContainerCache> m_main_cache = m_main_data->GetMainCache();
+
             try {
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
@@ -221,6 +233,10 @@ namespace pandora {
             request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
             request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
 
+            // Delete these lines
+            ServerOptions* m_server_options = m_main_data->GetServerOptions();
+            std::shared_ptr<ElementContainerCache> m_main_cache = m_main_data->GetMainCache();
+
             try {
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
@@ -228,7 +244,7 @@ namespace pandora {
                 pandora::utilities::ValidateElementContainerName(request_data, m_server_options);
                 pandora::utilities::ValidateElementID(request_data, m_server_options);
 
-                pandora::core::DeleteElement(m_main_cache, m_server_options, request_data);
+                //pandora::core::DeleteElement(m_main_cache, m_server_options, request_data);
 
                 m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
                 m_server_options->LogToFile(request_data);

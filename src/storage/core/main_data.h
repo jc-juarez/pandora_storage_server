@@ -9,7 +9,9 @@
 #ifndef MAIN_DATA_H
 #define MAIN_DATA_H
 
+#include "element_container.h"
 #include <unordered_map>
+#include <utility>
 #include <memory>
 #include <string>
 #include <mutex>
@@ -17,7 +19,6 @@
 namespace pandora {
 
     class ServerOptions;
-    class ElementContainer;
     class ElementContainerCache;
 
     class MainData {
@@ -37,12 +38,13 @@ namespace pandora {
 
         public:
             // Getter Methods
-            ServerOptions* GetServerOptions() const;
-            std::shared_ptr<ElementContainerCache>& GetMainCache() const;
-            ElementContainer& GetElementContainer(const std::string&) const;
+            ServerOptions* GetServerOptions();
+            std::shared_ptr<ElementContainerCache>& GetMainCache();
+            ElementContainer& GetElementContainer(const std::string&);
 
         public:
             // Utilities Methods
+            void AddElementContainer(const std::string&);
             void LockExclusiveElementContainerOperations();
             void UnlockExclusiveElementContainerOperations();
             bool ElementContainerExists(const std::string&);

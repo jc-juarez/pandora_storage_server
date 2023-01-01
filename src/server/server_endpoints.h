@@ -36,7 +36,7 @@ namespace pandora {
 
             // Dependencies
             public:
-                std::shared_ptr<pandora::MainData>& m_main_data;
+                std::shared_ptr<pandora::MainData> m_main_data;
 
         };
 

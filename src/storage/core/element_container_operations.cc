@@ -10,6 +10,7 @@
 #include "../../server/server_utilities.h"
 #include "../../server/server_constants.h"
 #include "../storage.h"
+#include "element_container.h"
 #include "main_data.h"
 #include <filesystem>
 #include <iostream>
@@ -22,25 +23,6 @@ namespace pandora {
 
     namespace core {
 
-        std::string GetElementContainerData(int index, const std::string& element_container_data_path) {
-
-            std::ifstream element_container_data_file;
-            element_container_data_file.open(element_container_data_path);
-
-            std::string line {};
-            int element_container_current_size {};
-            int current_index {1};
-
-            while (std::getline(element_container_data_file, line)) {
-                if(current_index == index) {
-                    return line;
-                }
-                ++current_index;
-            }
-
-            return pandora::constants::not_found_string;
-        }
-
         void CreateElementContainer(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
     
             // Check for Element Container in Live Memory
@@ -49,39 +31,22 @@ namespace pandora {
             // Lock shared operation
             main_data->LockExclusiveElementContainerOperations();
 
-            // Element Container Path
-            std::string element_container_path {pandora::constants::element_containers_directory_path};
-            element_container_path.append("/" + request_data.arguments[pandora::constants::element_container_name]);
-
             // Check if Element Container already exists
-            if(std::filesystem::exists(element_container_path)) {
+            if(main_data->ElementContainerExists(request_data.arguments[pandora::constants::element_container_name])) {
                 request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' already exists.");
-                server_options->LogError(pandora::constants::ElementContainerExistsErrorCode, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerExistsErrorCode, request_data);
             }
             
             // Create Element Container
-            pandora::storage::CreateDirectory(element_container_path);
-
-            // Storage File creation
-            std::string element_container_storage_path {element_container_path};
-            element_container_storage_path.append("/" + pandora::constants::storage);
-            pandora::storage::AddFileContent(element_container_storage_path, "", false);
-            request_data.log.append("Element Container Storage File was created succesfully.");
-            server_options->LogInfo(request_data);
-
-            // Data File creation
-            std::string element_container_data_path {element_container_path};
-            element_container_data_path.append("/" + pandora::constants::data);
-            pandora::storage::AddFileContent(element_container_data_path, "0\n", true);
-            request_data.log.append("Element Container Data File was created successfully.");
-            server_options->LogInfo(request_data);
+            main_data->AddElementContainer(request_data.arguments[pandora::constants::element_container_name]);
 
             // Log Element Container successful creation
             request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
-            server_options->LogInfo(request_data);
+            main_data->GetServerOptions()->LogInfo(request_data);
 
             // Unlock shared operation
-            main_cache->UnlockSharedDeleteElementContainerOperation();
+            main_data->UnlockExclusiveElementContainerOperations();
+
         }
 
         void DeleteElementContainer(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {

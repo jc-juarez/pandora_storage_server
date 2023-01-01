@@ -43,6 +43,7 @@ namespace pandora {
 
         // Utilities Methods
         public:
+            std::string GetElementContainerData(int);
             void UpdateElementContainerSize(int);
             void LockExclusiveElementOperations();
             void UnlockExclusiveElementOperations();

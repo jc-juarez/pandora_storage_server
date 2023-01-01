@@ -24,7 +24,11 @@ namespace pandora {
         inline constexpr int http_ok {200};
         inline constexpr int http_bad_request {400};
         inline constexpr int http_internal_error {500};
-        inline constexpr int element_container_size_index {1};
+        inline constexpr int element_container_size_index {0};
+        inline constexpr int element_container_name_index {1};
+        inline constexpr int element_container_path_index {2};
+        inline constexpr int element_container_data_file_path_index {3};
+        inline constexpr int element_container_storage_file_path_index {4};
         inline constexpr int not_found_int {-1};
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};

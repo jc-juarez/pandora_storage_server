@@ -33,7 +33,7 @@ namespace pandora {
                 outfile.open(file_path, std::ios_base::app);
             else
                 outfile.open(file_path);
-            outfile << content;
+            if(!content.empty()) outfile << content;
         }
 
         void ReplaceFileLine(int line_number, const std::string& file_path, const std::string replacement) {

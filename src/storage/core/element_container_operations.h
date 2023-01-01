@@ -17,11 +17,13 @@
 
 namespace pandora {
 
+    class MainData;
+    class ServerOptions;
+
     namespace core {
 
-        void CreateElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
+        void CreateElementContainer(std::shared_ptr<pandora::MainData>&, pandora::utilities::RequestData&);
         void DeleteElementContainer(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
-        std::string GetElementContainerData(int, const std::string&);
 
     }
 
