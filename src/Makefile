@@ -6,10 +6,10 @@
 # Contact: jc.juarezgarcia@outlook.com
 # *************************************
 
-pandora: main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element.o main_data.o
+pandora: main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element_operations.o main_data.o
 	-rm -r build
 	mkdir build
-	g++ -std=c++17 main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element.o main_data.o -o ./build/pandora -lhttpserver -pthread
+	g++ -std=c++17 main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element_operations.o main_data.o -o ./build/pandora -lhttpserver -pthread
 	rm *.o
 
 main.o: ./server/main.cc
@@ -36,8 +36,8 @@ element_container.o: ./storage/core/element_container.cc ./storage/core/element_
 element_container_operations.o: ./storage/core/element_container_operations.cc ./storage/core/element_container_operations.h
 	g++ -std=c++17 -c ./storage/core/element_container_operations.cc -lhttpserver -pthread
 
-element.o: ./storage/core/element.cc ./storage/core/element.h
-	g++ -std=c++17 -c ./storage/core/element.cc -lhttpserver -pthread
+element_operations.o: ./storage/core/element_operations.cc ./storage/core/element_operations.h
+	g++ -std=c++17 -c ./storage/core/element_operations.cc -lhttpserver -pthread
 
 main_data.o: ./storage/core/main_data.cc ./storage/core/main_data.h
 	g++ -std=c++17 -c ./storage/core/main_data.cc -lhttpserver -pthread

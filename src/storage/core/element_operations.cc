@@ -1,7 +1,7 @@
 // *************************************
 // Pandora Storage Server
 // Storage Core
-// 'element.cc'
+// 'element_operations.cc'
 // Author: Juan Carlos Juárez
 // Contact: jc.juarezgarcia@outlook.com
 // *************************************
@@ -106,7 +106,9 @@ namespace pandora {
 
             // Element Container name
             std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            // Element ID
             std::string element_id {request_data.arguments[pandora::constants::element_id]};
+            // Element Value
             std::string element_value {request_data.arguments[pandora::constants::element_value]};
 
             // Check if Element Container does not exist 
