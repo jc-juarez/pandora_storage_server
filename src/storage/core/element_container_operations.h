@@ -18,7 +18,6 @@
 namespace pandora {
 
     class MainData;
-    class ServerOptions;
 
     namespace core {
 

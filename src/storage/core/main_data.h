@@ -11,10 +11,10 @@
 
 #include "element_container.h"
 #include <unordered_map>
+#include <shared_mutex>
 #include <utility>
 #include <memory>
 #include <string>
-#include <mutex>
 
 namespace pandora {
 
@@ -34,7 +34,7 @@ namespace pandora {
             std::shared_ptr<ElementContainerCache> m_main_cache;
             std::unordered_map<std::string, ElementContainer> m_element_containers;
             // General properties
-            std::mutex m_element_container_operations_mutex;
+            std::shared_mutex m_element_container_operations_mutex;
 
         public:
             // Getter Methods
@@ -48,6 +48,8 @@ namespace pandora {
             void DeleteElementContainer(const std::string&);
             void LockExclusiveElementContainerOperations();
             void UnlockExclusiveElementContainerOperations();
+            void LockSharedElementContainerOperations();
+            void UnlockSharedElementContainerOperations();
             bool ElementContainerExists(const std::string&);
 
     };

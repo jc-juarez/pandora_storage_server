@@ -10,6 +10,8 @@
 #include "../../server/server_utilities.h"
 #include "../../server/server_constants.h"
 #include "../storage.h"
+#include "element_container.h"
+#include "main_data.h"
 #include "live-memory/element_container_cache.h"
 #include "element_container.h"
 #include <filesystem>
@@ -96,70 +98,69 @@ namespace pandora {
             return pandora::constants::not_found_int;
         }
 
-        void SetElement(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {
+        void SetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
 
             // Set Element on Disk
-            // Lock shared operation
-            main_cache->LockSharedDeleteElementContainerOperation();
+            // Lock Shared operation
+            main_data->LockSharedElementContainerOperations();
 
-            // Element Container Path
-            std::string element_container_path {pandora::constants::element_containers_directory_path};
-            element_container_path.append("/" + request_data.arguments[pandora::constants::element_container_name]);
+            // Element Container name
+            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            std::string element_id {request_data.arguments[pandora::constants::element_id]};
+            std::string element_value {request_data.arguments[pandora::constants::element_value]};
 
             // Check if Element Container does not exist 
-            if(!std::filesystem::exists(element_container_path)) {
-                request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' does not exist and Element '" +
-                                         request_data.arguments[pandora::constants::element_id] + "' could not be set.");
-                server_options->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
+            if(!main_data->ElementContainerExists(element_container_name)) {
+                request_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
+                                         element_id + "' could not be set.");
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
             }
 
-            // Element Container Data File path
-            std::string element_container_data_path {element_container_path};
-            element_container_data_path.append("/" + pandora::constants::data);
-        
-            // **********************REDO
-            // Get Element Container current size 
-            int element_container_current_size {0};
+            // Element Container instance
+            ElementContainer& element_container = main_data->GetElementContainer(element_container_name);
+
+            // Lock Exclusive Operation
+            element_container.LockExclusiveElementOperations();
 
             // Check if Element Container exceeds capacity
-            if(element_container_current_size == pandora::constants::ElementContainerMaxCapacity) {
-                request_data.log.append("Element Container '" + request_data.arguments[pandora::constants::element_container_name] + "' has reached the max number of Elements (" + 
+            if(element_container.GetElementContainerSize() == pandora::constants::ElementContainerMaxCapacity) {
+                request_data.log.append("Element Container '" + element_container.GetElementContainerName() + "' has reached the max number of Elements (" + 
                                          std::to_string(pandora::constants::ElementContainerMaxCapacity) + ") and cannot add more Elements.");
-                server_options->LogError(pandora::constants::ElementContainerFull, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerFull, request_data);
             }
 
-            // Element Container Storage File path
-            std::string element_container_storage_path {element_container_path};
-            element_container_storage_path.append("/" + pandora::constants::storage);
-
             // Remove previous element if already exists
-            int element_line_number = GetElementLineNumber(request_data.arguments[pandora::constants::element_id], element_container_storage_path, server_options, request_data);
+            int element_line_number = GetElementLineNumber(element_id, element_container.GetElementContainerStorageFilePath(),
+                                                           main_data->GetServerOptions(), request_data);
             bool element_exists = element_line_number != pandora::constants::not_found_int ? true : false;
-            if(element_exists) pandora::storage::ReplaceFileLine(element_line_number, element_container_storage_path);
+            if(element_exists) pandora::storage::ReplaceFileLine(element_line_number, element_container.GetElementContainerStorageFilePath());
 
             // Construct Element
             std::string element {};
 
             // Append Element ID
-            element.append(request_data.arguments[pandora::constants::element_id]);
+            element.append(element_id);
             // Append Delimeter
             element.append(pandora::constants::element_delimeter);
             // Append Value
-            element.append(request_data.arguments[pandora::constants::element_value] + "\n");
+            element.append(element_value + "\n");
 
             // Add Element to the Element Container
-            pandora::storage::AddFileContent(element_container_storage_path, element, true);
+            pandora::storage::AddFileContent(element_container.GetElementContainerStorageFilePath(), element, true);
 
             // Update Element Container size
-            if(!element_exists) pandora::storage::ReplaceFileLine(pandora::constants::element_container_size_index, element_container_data_path, std::to_string(element_container_current_size + 1));
+            if(!element_exists) element_container.UpdateElementContainerSize(element_container.GetElementContainerSize() + 1);
 
             // Log Element succesful set
-            request_data.log.append("Element '" + request_data.arguments[pandora::constants::element_id] + "' has been set inside the Element Container '" +
-                                     request_data.arguments[pandora::constants::element_container_name] + "'.");
-            server_options->LogInfo(request_data);
+            request_data.log.append("Element '" + element_id + "' has been set inside the Element Container '" +
+                                     element_container_name + "'.");
+            main_data->GetServerOptions()->LogInfo(request_data);
 
-            // Unlock shared operation
-            main_cache->UnlockSharedDeleteElementContainerOperation();
+            // Unlock Exclusive Operation
+            element_container.UnlockExclusiveElementOperations();
+
+            // Unlock Shared operation
+            main_data->UnlockSharedElementContainerOperations();
 
             // Set Live Memory
 

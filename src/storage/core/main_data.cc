@@ -16,7 +16,6 @@
 #include <utility>
 #include <memory>
 #include <string>
-#include <iostream>
 
 namespace pandora {
 
@@ -37,9 +36,6 @@ namespace pandora {
             AddElementContainer(element_container_name);
 
         } 
-
-        // Delete along with <iostream>
-        for(auto& element_container_pair : m_element_containers) std::cout << "*******" << element_container_pair.second.GetElementContainerName() << std::endl;
 
     }
 
@@ -65,6 +61,10 @@ namespace pandora {
     void MainData::LockExclusiveElementContainerOperations() { m_element_container_operations_mutex.lock(); }
     
     void MainData::UnlockExclusiveElementContainerOperations() { m_element_container_operations_mutex.unlock(); }
+
+    void MainData::LockSharedElementContainerOperations() { m_element_container_operations_mutex.lock_shared(); }
+
+    void MainData::UnlockSharedElementContainerOperations() { m_element_container_operations_mutex.unlock_shared(); }
 
     bool MainData::ElementContainerExists(const std::string& element_container_name) { 
 

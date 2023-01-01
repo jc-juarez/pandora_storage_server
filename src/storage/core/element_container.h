@@ -21,6 +21,10 @@ namespace pandora {
         public:
             ElementContainer(const std::string&);
 
+        // No Copy Constructor
+        public:
+            ElementContainer(const ElementContainer&) = delete;
+
         // Properties
         private:
             // General properties

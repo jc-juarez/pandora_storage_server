@@ -136,22 +136,18 @@ namespace pandora {
             request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
             request_data.arguments[pandora::constants::element_value] = request.get_arg(pandora::constants::element_value);
 
-            // Delete these lines
-            ServerOptions* m_server_options = m_main_data->GetServerOptions();
-            std::shared_ptr<ElementContainerCache> m_main_cache = m_main_data->GetMainCache();
-
             try {
 
-                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
 
-                pandora::utilities::ValidateElementContainerName(request_data, m_server_options);
-                pandora::utilities::ValidateElementID(request_data, m_server_options);
-                pandora::utilities::ValidateElementValue(request_data, m_server_options);
+                pandora::utilities::ValidateElementContainerName(request_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementID(request_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementValue(request_data, m_main_data->GetServerOptions());
 
-                pandora::core::SetElement(m_main_cache, m_server_options, request_data);
+                pandora::core::SetElement(m_main_data, request_data);
 
-                m_server_options->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
-                m_server_options->LogToFile(request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data);
+                m_main_data->GetServerOptions()->LogToFile(request_data);
                 
                 request_data.log.append("Element '" + request_data.arguments[pandora::constants::element_id] + "' was set succesfully.");
                 return response(request_data.log, pandora::constants::http_ok);
@@ -159,7 +155,9 @@ namespace pandora {
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
-                m_main_cache->UnlockSharedDeleteElementContainerOperation();
+                if(m_main_data->ElementContainerExists(request_data.arguments[pandora::constants::element_container_name])) 
+                    m_main_data->GetElementContainer(request_data.arguments[pandora::constants::element_container_name]).UnlockExclusiveElementOperations();
+                m_main_data->UnlockSharedElementContainerOperations();
 
                 request_data.log.append(std::string(error.what()));
                 return response(request_data.log, pandora::constants::http_internal_error);
