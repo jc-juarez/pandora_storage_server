@@ -6,10 +6,10 @@
 # Contact: jc.juarezgarcia@outlook.com
 # *************************************
 
-pandora: main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element_operations.o main_data.o
+pandora: main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element_operations.o main_data.o shard.o
 	-rm -r build
 	mkdir build
-	g++ -std=c++17 main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element_operations.o main_data.o -o ./build/pandora -lhttpserver -pthread
+	g++ -std=c++17 main.o server_options.o server_endpoints.o server_utilities.o storage.o element_container_cache.o element_container.o element_container_operations.o element_operations.o main_data.o shard.o -o ./build/pandora -lhttpserver -pthread
 	rm *.o
 
 main.o: ./server/main.cc
@@ -41,6 +41,9 @@ element_operations.o: ./storage/core/element_operations.cc ./storage/core/elemen
 
 main_data.o: ./storage/core/main_data.cc ./storage/core/main_data.h
 	g++ -std=c++17 -c ./storage/core/main_data.cc -lhttpserver -pthread
+
+shard.o: ./storage/core/shard.cc ./storage/core/shard.h
+	g++ -std=c++17 -c ./storage/core/shard.cc -lhttpserver -pthread
 
 clean:
 	-rm *.o

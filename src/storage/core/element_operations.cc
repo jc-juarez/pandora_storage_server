@@ -99,7 +99,7 @@ namespace pandora {
         }
 
         void SetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
-
+            /*
             // Set Element on Disk
             // Lock Shared operation
             main_data->LockSharedElementContainerOperations();
@@ -165,7 +165,7 @@ namespace pandora {
             main_data->UnlockSharedElementContainerOperations();
 
             // Set Live Memory
-
+            */
         }
 
         std::string GetElement(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {

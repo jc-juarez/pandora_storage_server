@@ -41,6 +41,9 @@ int main(int argc, char** argv) {
                                .not_found_resource(pandora::endpoints::resource_not_found)
                                .method_not_allowed_resource(pandora::endpoints::method_not_allowed);
 
+    // Create Pandora's directories
+    pandora::utilities::CreateBaseDirectories();
+
     // Storage Core: Main Cache creation
     std::shared_ptr<pandora::ElementContainerCache> main_cache = std::make_shared<pandora::ElementContainerCache>();
     // Storage Core: Main Data creation
@@ -51,9 +54,6 @@ int main(int argc, char** argv) {
     
     // Start Pandora Storage Server in non-blocking mode
     pandora_storage_server.start(false);
-
-    // Create Pandora's directories
-    pandora::utilities::CreateBaseDirectories();
 
     // Initial Live Memory Filling
     main_cache->InitialLiveMemoryFilling();
