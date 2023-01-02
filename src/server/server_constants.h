@@ -35,7 +35,8 @@ namespace pandora {
         inline constexpr int shard_datafile_path_index {2};
         inline constexpr int shard_datafile_data_file_path_index {3};
         inline constexpr int shard_datafile_storage_file_path_index {4};
-        inline constexpr int shards_number {100};
+        inline constexpr int number_shards {100};
+        inline constexpr int number_search_threads {10};
         inline constexpr int not_found_int {-1};
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};
@@ -59,7 +60,8 @@ namespace pandora {
 
         // Validation and Restrictions
         inline constexpr size_t ElementContainerNameMaxSize {100};
-        inline constexpr size_t ElementContainerMaxCapacity {50000};
+        inline constexpr size_t ElementContainerMaxCapacity {100000};
+        inline constexpr size_t ShardMaxCapacity {1000};
         inline constexpr size_t ElementIDMaxSize {50};
         inline constexpr size_t ElementValueMaxSize {1000};
         inline const std::string element_delimeter {"<//>"};

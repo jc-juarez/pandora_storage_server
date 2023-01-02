@@ -23,6 +23,10 @@ namespace pandora {
         m_element_container_name = element_container_name;
         m_element_container_size = 0;
         m_round_robin_index = 0;
+        m_shard_segments_size = pandora::constants::number_shards / pandora::constants::number_search_threads;
+        
+        // Set Search Threads
+        m_stop_search_threads = new std::atomic_bool(false);
 
         m_element_container_path.append(pandora::constants::element_containers_directory_path + "/" + GetElementContainerName());
         m_element_container_data_file_path.append(GetElementContainerPath() + "/" + pandora::constants::data);
@@ -31,7 +35,7 @@ namespace pandora {
         bool element_container_exists = std::filesystem::exists(GetElementContainerPath());
 
         // Construct Shards
-        for(int shard_index = 0; shard_index < pandora::constants::shards_number; ++shard_index) {
+        for(int shard_index = 0; shard_index < pandora::constants::number_shards; ++shard_index) {
             CreateShard(shard_index, element_container_exists);
         }
 
@@ -53,7 +57,7 @@ namespace pandora {
 
         // Fill Data File
         pandora::storage::AddFileContent(GetElementContainerDataFilePath(), std::to_string(GetElementContainerSize()) + "\n", true);
-        pandora::storage::AddFileContent(GetElementContainerDataFilePath(), std::to_string(GetElementContainerRoundRobinIndex()) + "\n", true);
+        pandora::storage::AddFileContent(GetElementContainerDataFilePath(), std::to_string(GetRoundRobinIndex()) + "\n", true);
         pandora::storage::AddFileContent(GetElementContainerDataFilePath(), GetElementContainerName() + "\n", true);
         pandora::storage::AddFileContent(GetElementContainerDataFilePath(), GetElementContainerPath() + "\n", true);
         pandora::storage::AddFileContent(GetElementContainerDataFilePath(), GetElementContainerDataFilePath() + "\n", true);
@@ -61,11 +65,15 @@ namespace pandora {
 
     }
 
+    ElementContainer::~ElementContainer() { delete m_stop_search_threads; }
+
     std::string ElementContainer::GetElementContainerName() const { return m_element_container_name; }
 
     int ElementContainer::GetElementContainerSize() const { return m_element_container_size; }
 
-    int ElementContainer::GetElementContainerRoundRobinIndex() const { return m_round_robin_index; }
+    int ElementContainer::GetRoundRobinIndex() const { return m_round_robin_index; }
+
+    int ElementContainer::GetShardSegmentsSize() const { return m_shard_segments_size; }
 
     std::string ElementContainer::GetElementContainerPath() const { return m_element_container_path; }
 
@@ -111,10 +119,20 @@ namespace pandora {
 
     }
 
-    void ElementContainer::IncreaseElementContainerRoundRobinIndex() { 
+    void ElementContainer::IncreaseRoundRobinIndex() { 
         
+        int increased_round_robin_index = GetRoundRobinIndex() + GetShardSegmentsSize();
+        
+        if(increased_round_robin_index >= pandora::constants::number_shards) {
+            increased_round_robin_index = (increased_round_robin_index - pandora::constants::number_shards) + 1;
+            // If true, Round Robin Index is set back to 0 to start over 
+            if(increased_round_robin_index == GetShardSegmentsSize()) increased_round_robin_index = 0;
+        }
+
         pandora::storage::ReplaceFileLine(pandora::constants::element_container_datafile_round_robin_index_index + 1, 
-                                          GetElementContainerDataFilePath(), std::to_string(++m_round_robin_index)); 
+                                          GetElementContainerDataFilePath(), std::to_string(increased_round_robin_index));
+
+        m_round_robin_index = increased_round_robin_index; 
         
     }
 

@@ -14,11 +14,15 @@
 #include "main_data.h"
 #include "live-memory/element_container_cache.h"
 #include "element_container.h"
+#include <unordered_set>
 #include <filesystem>
 #include <iostream>
+#include <utility>
 #include <fstream>
+#include <future>
 #include <vector>
 #include <string>
+#include <array>
 
 namespace pandora {
 
@@ -61,7 +65,7 @@ namespace pandora {
             return false;
         }
 
-        int GetElementLineNumber(const std::string& element_id, const std::string& element_container_storage_path, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {
+        int GetElementLineNumber(const std::string& element_id, const std::string& element_container_storage_path, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data, std::atomic_bool* stop_search_threads) {
 
             // Reference Element Container Storage File
             std::ifstream element_container_storage_file(element_container_storage_path, std::ios::in);
@@ -75,10 +79,12 @@ namespace pandora {
             try {
 
                 while(element_container_storage_file.getline(element, max_element_size)) {
+                    if(stop_search_threads->load()) pandora::constants::not_found_int;
                     ++line_number;
                     // Look for matching Element ID and return line number
                     if(MatchesID(element_id, element)) {
                         delete[] element;
+                        stop_search_threads->store(true);
                         return line_number;
                     }
                 }
@@ -98,8 +104,44 @@ namespace pandora {
             return pandora::constants::not_found_int;
         }
 
+        std::pair<int, int> WaitForSearchResult(std::array<std::future<std::pair<int, int>>, pandora::constants::number_search_threads>& search_threads, int shard_segments_size) {
+
+            std::unordered_set<int> finished_search_threads {};
+
+            while(finished_search_threads.size() < pandora::constants::number_search_threads) {
+
+                for(int segment_thread_index = 0; segment_thread_index < pandora::constants::number_search_threads && finished_search_threads.size() < pandora::constants::number_search_threads; ++segment_thread_index) {
+
+                    if(finished_search_threads.count(segment_thread_index)) continue;
+                    if(!(search_threads[segment_thread_index].wait_for(std::chrono::seconds(0)) == std::future_status::ready)) continue;
+
+                    finished_search_threads.insert(segment_thread_index);
+                    std::pair<int, int> result = search_threads[segment_thread_index].get();
+
+                    if(result.first != pandora::constants::not_found_int) return {result.first, (segment_thread_index * shard_segments_size) + result.second };
+
+                }
+
+            }
+
+            // Element not found in any Shard
+            return {pandora::constants::not_found_int, pandora::constants::not_found_int};
+
+        }
+
+        std::pair<int, int> SearchElementInterface(std::vector<std::string> shard_segment, const std::string& element_id, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data, std::atomic_bool* stop_search_threads) {
+
+            for(int shard_subindex = 0; shard_subindex < shard_segment.size(); ++shard_subindex) {
+                int element_line = GetElementLineNumber(element_id, shard_segment[shard_subindex], server_options, request_data, stop_search_threads);
+                if(element_line != pandora::constants::not_found_int) return {element_line, shard_subindex};
+            }
+
+            return {pandora::constants::not_found_int, pandora::constants::not_found_int};
+
+        }
+
         void SetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
-            /*
+            
             // Set Element on Disk
             // Lock Shared operation
             main_data->LockSharedElementContainerOperations();
@@ -131,12 +173,44 @@ namespace pandora {
                 main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerFull, request_data);
             }
 
-            // Remove previous element if already exists
-            int element_line_number = GetElementLineNumber(element_id, element_container.GetElementContainerStorageFilePath(),
-                                                           main_data->GetServerOptions(), request_data);
-            bool element_exists = element_line_number != pandora::constants::not_found_int ? true : false;
-            if(element_exists) pandora::storage::ReplaceFileLine(element_line_number, element_container.GetElementContainerStorageFilePath());
+            // Initialize search threads 
+            element_container.m_stop_search_threads->store(false);
 
+            // Search Threads container that maps Element Line to Shard Index
+            std::array<std::future<std::pair<int, int>>, pandora::constants::number_search_threads> search_threads {};
+
+            // Launch all Search Threads
+            for(int segment_thread_index = 0; segment_thread_index < pandora::constants::number_search_threads; ++segment_thread_index) {
+                
+                std::vector<std::string> shard_segment {};
+
+                for(int shard_subindex = 0; shard_subindex < element_container.GetShardSegmentsSize(); ++shard_subindex) {
+
+                    shard_segment.push_back(element_container.GetShard((segment_thread_index * element_container.GetShardSegmentsSize()) + shard_subindex).GetShardStorageFilePath());
+
+                }
+
+                search_threads[segment_thread_index] = std::async(std::launch::async, SearchElementInterface, shard_segment,
+                                                                  std::ref(element_id), main_data->GetServerOptions(), std::ref(request_data), element_container.m_stop_search_threads);
+
+            }
+
+            // Wait for search result (pair maps Element Line to Shard Index)
+            std::pair<int, int> search_result = WaitForSearchResult(search_threads, element_container.GetShardSegmentsSize());
+
+            // Initialize search threads 
+            element_container.m_stop_search_threads->store(false);
+
+            // Remove previous element if already exists
+            bool element_exists = search_result.first != pandora::constants::not_found_int ? true : false; 
+            if(element_exists) {
+                // Remove Element
+                pandora::storage::ReplaceFileLine(search_result.first, element_container.GetShard(search_result.second).GetShardStorageFilePath());
+                // Decrease Shard size
+                int shard_size = element_container.GetShard(search_result.second).GetShardSize();
+                element_container.GetShard(search_result.second).UpdateShardSize(shard_size - 1);
+            }
+            
             // Construct Element
             std::string element {};
 
@@ -147,11 +221,34 @@ namespace pandora {
             // Append Value
             element.append(element_value + "\n");
 
-            // Add Element to the Element Container
-            pandora::storage::AddFileContent(element_container.GetElementContainerStorageFilePath(), element, true);
+            // Look for non-full Shard to insert Element
+            int full_shards_count {};
+
+            while(element_container.GetShard(element_container.GetRoundRobinIndex()).GetShardSize() == pandora::constants::ShardMaxCapacity) {
+
+                if(full_shards_count == pandora::constants::number_shards) {
+                    request_data.log.append("Element Container '" + element_container.GetElementContainerName() + "' has reached the max number of Elements (" + 
+                                             std::to_string(pandora::constants::ElementContainerMaxCapacity) + ") and cannot add more Elements.");
+                    main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerFull, request_data);
+                }
+
+                ++full_shards_count;
+                element_container.IncreaseRoundRobinIndex();
+
+            }
+
+            // Add Element to Shard
+            pandora::storage::AddFileContent(element_container.GetShard(element_container.GetRoundRobinIndex()).GetShardStorageFilePath(), element, true);
+
+            // Update Shard size
+            int current_shard_size = element_container.GetShard(element_container.GetRoundRobinIndex()).GetShardSize();
+            element_container.GetShard(element_container.GetRoundRobinIndex()).UpdateShardSize(current_shard_size + 1);
 
             // Update Element Container size
             if(!element_exists) element_container.UpdateElementContainerSize(element_container.GetElementContainerSize() + 1);
+
+            // Increase Element Container Round Robin Index
+            element_container.IncreaseRoundRobinIndex();
 
             // Log Element succesful set
             request_data.log.append("Element '" + element_id + "' has been set inside the Element Container '" +
@@ -165,7 +262,7 @@ namespace pandora {
             main_data->UnlockSharedElementContainerOperations();
 
             // Set Live Memory
-            */
+            
         }
 
         std::string GetElement(std::shared_ptr<pandora::ElementContainerCache>& main_cache, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data) {
