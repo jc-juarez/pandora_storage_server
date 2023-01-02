@@ -53,7 +53,7 @@ namespace pandora {
         }
 
         void DeleteElementContainer(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
-            /*
+            
             // Check for Element Container in Live Memory
             
             // Check for Element Container in Disk
@@ -78,7 +78,7 @@ namespace pandora {
 
             // Unlock exclusive operation
             main_data->UnlockExclusiveElementContainerOperations();
-            */
+            
         }
 
     }

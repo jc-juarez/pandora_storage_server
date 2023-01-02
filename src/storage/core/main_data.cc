@@ -35,7 +35,7 @@ namespace pandora {
 
             AddElementContainer(element_container_name);
 
-        } 
+        }
 
     }
 
