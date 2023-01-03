@@ -20,7 +20,7 @@ namespace pandora {
     namespace core {
 
         void SetElement(std::shared_ptr<pandora::MainData>&, pandora::utilities::RequestData&);
-        void DeleteElement(std::shared_ptr<pandora::ElementContainerCache>&, pandora::ServerOptions*, pandora::utilities::RequestData&);
+        void DeleteElement(std::shared_ptr<pandora::MainData>&, pandora::utilities::RequestData&);
         std::string GetElement(std::shared_ptr<pandora::MainData>&, pandora::utilities::RequestData&);
 
     }

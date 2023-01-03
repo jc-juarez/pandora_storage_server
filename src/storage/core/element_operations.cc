@@ -286,6 +286,68 @@ namespace pandora {
             
         }
 
+        void DeleteElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
+            
+            // Delete Element on Disk
+            // Lock Shared operation
+            main_data->LockSharedElementContainerOperations();
+
+            // Element Container name
+            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            // Element ID
+            std::string element_id {request_data.arguments[pandora::constants::element_id]};
+
+            // Check if Element Container does not exist 
+            if(!main_data->ElementContainerExists(element_container_name)) {
+                request_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
+                                         element_id + "' could not be deleted.");
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
+            }
+
+            // Element Container instance
+            ElementContainer& element_container = main_data->GetElementContainer(element_container_name);
+
+            // Lock Exclusive Operation
+            element_container.LockExclusiveElementOperations();
+
+            // Launch Search Threads and Wait for search result (pair maps Element Line to Shard Index)
+            std::pair<std::string, int> search_result = WaitForSearchResult(pandora::constants::LineValueOption::Line, main_data, 
+                                                                            request_data, element_container, element_id, element_container.GetShardSegmentSize());
+
+            // Determine if the Element exists
+            bool element_exists = search_result.first != pandora::constants::not_found_string ? true : false; 
+
+            // Check if Element exists
+            if(!element_exists) {
+                request_data.log.append("Element Container '" + element_container_name + "' does not contain Element '" +
+                                         element_id + "'.");
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementNotExists, request_data);
+            }
+
+            // Remove Element
+            pandora::storage::ReplaceFileLine(std::stoi(search_result.first), element_container.GetShard(search_result.second).GetShardStorageFilePath());
+            // Decrease Shard size
+            int shard_size = element_container.GetShard(search_result.second).GetShardSize();
+            element_container.GetShard(search_result.second).UpdateShardSize(shard_size - 1);
+            
+            // Update Element Container size
+            element_container.UpdateElementContainerSize(element_container.GetElementContainerSize() - 1);
+
+            // Log Element succesful element removal
+            request_data.log.append("Element '" + element_id + "' has been deleted from the Element Container '" +
+                                     element_container_name + "'.");
+            main_data->GetServerOptions()->LogInfo(request_data);
+
+            // Unlock Exclusive Operation
+            element_container.UnlockExclusiveElementOperations();
+
+            // Unlock Shared operation
+            main_data->UnlockSharedElementContainerOperations();
+
+            // Set Live Memory
+            
+        }
+
         std::string GetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
 
             // Retrieve from Live Memory
@@ -320,7 +382,7 @@ namespace pandora {
             std::string element_value = search_result.first;
 
             // Check if Element exists
-            if(element_value != pandora::constants::not_found_string) {
+            if(element_value == pandora::constants::not_found_string) {
                 request_data.log.append("Element Container '" + element_container_name + "' does not contain Element '" +
                                          element_id + "'.");
                 main_data->GetServerOptions()->LogError(pandora::constants::ElementNotExists, request_data);
