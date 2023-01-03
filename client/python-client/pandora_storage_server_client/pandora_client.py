@@ -10,10 +10,10 @@ import requests
 
 class ResponseObject:
 
-    def __init__(self, http_status_code: str, http_response_body: str, error: bool = False, pandora_error_code: int = 0, pandora_error_message: str = '') -> None:
+    def __init__(self, http_status_code: str, response: str, error: bool = False, pandora_error_code: int = 0, pandora_error_message: str = '') -> None:
 
         self.http_status_code = http_status_code
-        self.http_response_body = http_response_body
+        self.response = response
         self.error = error
         self.pandora_error_code = pandora_error_code
         self.pandora_error_message = pandora_error_message
