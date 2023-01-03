@@ -99,7 +99,7 @@ namespace pandora {
             std::string logs_file_path {};
             logs_file_path.append(pandora::constants::logs_directory_path + "/pandoralog-" + GetServerSessionID() + ".txt");
             SetLogsFilePath(logs_file_path);
-            pandora::storage::AddFileContent(GetLogsFilePath(), "", false);
+            pandora::storage::FileOperation(GetLogsFilePath(), pandora::constants::FileOption::Create);
         }
 
         void ServerOptions::LogToFile(pandora::utilities::RequestData& request_data) {
@@ -111,7 +111,7 @@ namespace pandora {
         void ServerOptions::LogToFileThread(const std::string log_content) {
             write_logs_mutex.lock();
             try {
-                pandora::storage::AddFileContent(GetLogsFilePath(), log_content, true);
+                pandora::storage::FileOperation(GetLogsFilePath(), pandora::constants::FileOption::Append, log_content);
             } catch(...) {
                 std::string error {};
                 error.append("Pandora could not write logs to the '" + GetLogsFilePath() + "' logs file.");

@@ -15,6 +15,17 @@ namespace pandora {
 
     namespace constants {
 
+        // Enum Classes
+        enum class FileOption {
+            Append,
+            Create
+        };
+
+        enum class LineValueOption {
+            Line,
+            Value
+        };
+
         // Default options
         inline constexpr int default_port_number {5000};
         inline constexpr bool default_debug_enabled {true};

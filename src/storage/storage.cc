@@ -27,13 +27,19 @@ namespace pandora {
             }
         }
 
-        void AddFileContent(const std::string file_path, const std::string content, bool append) {
+        void FileOperation(const std::string file_path, pandora::constants::FileOption file_option, const std::string content) {
+
             std::ofstream outfile;
-            if (append)
-                outfile.open(file_path, std::ios_base::app);
-            else
+
+            if(file_option == pandora::constants::FileOption::Create) {
                 outfile.open(file_path);
-            if(!content.empty()) outfile << content;
+                return;
+            }
+
+            outfile.open(file_path, std::ios_base::app);
+
+            outfile << content;
+
         }
 
         void ReplaceFileLine(int line_number, const std::string& file_path, const std::string replacement) {

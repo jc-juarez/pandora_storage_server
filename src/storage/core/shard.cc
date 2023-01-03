@@ -34,16 +34,16 @@ namespace pandora {
         pandora::storage::CreateDirectory(GetShardPath());
 
         // Data File creation
-        pandora::storage::AddFileContent(GetShardDataFilePath());
+        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Create);
         // Storage File creation
-        pandora::storage::AddFileContent(GetShardStorageFilePath());
+        pandora::storage::FileOperation(GetShardStorageFilePath(), pandora::constants::FileOption::Create);
 
         // Fill Data File
-        pandora::storage::AddFileContent(GetShardDataFilePath(), std::to_string(GetShardSize()) + "\n", true);
-        pandora::storage::AddFileContent(GetShardDataFilePath(), GetShardName() + "\n", true);
-        pandora::storage::AddFileContent(GetShardDataFilePath(), GetShardPath() + "\n", true);
-        pandora::storage::AddFileContent(GetShardDataFilePath(), GetShardDataFilePath() + "\n", true);
-        pandora::storage::AddFileContent(GetShardDataFilePath(), GetShardStorageFilePath() + "\n", true);
+        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, std::to_string(GetShardSize()) + "\n");
+        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardName() + "\n");
+        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardPath() + "\n");
+        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardDataFilePath() + "\n");
+        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardStorageFilePath() + "\n");
 
     }
 
