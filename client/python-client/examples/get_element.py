@@ -14,7 +14,7 @@ def main():
 
     school_grades_element_container = 'SchoolGrades'
     student_name = 'Maria'
-    student_grade = 'A+'
+    student_grade = '100'
 
     pandora_client.create_element_container(element_container_name=school_grades_element_container)
 
@@ -25,7 +25,7 @@ def main():
     if(query.error):
         print('Response had error code: {0} | [{1}] {2}'.format(query.pandora_error_code, query.pandora_transaction_code, query.pandora_error_message))
     else:
-        print('Succesful operation: HTTP {0} | Student {1} has grade: {2}'.format(query.http_status_code, student_name, query.response))
+        print('Succesful operation: HTTP {0} | Student {1} has grade: {2}'.format(query.http_status_code, student_name, query.result))
 
 if __name__ == '__main__':
     main()
