@@ -12,14 +12,16 @@ def main():
 
     pandora_client = pandora.PandoraClient()
 
-    school_grades_element_container = 'SchoolGrades3'
+    school_grades_element_container = 'SchoolGrades'
 
     query = pandora_client.create_element_container(element_container_name=school_grades_element_container)
 
     if(query.error):
-        print('Response had error code: {0} | [{1}] {2}'.format(query.pandora_error_code, query.pandora_transaction_code, query.pandora_error_message))
+        print('HTTP {0} | Response Result is: {1} | Error Code: {2} | [{3}] Server Ellapsed Time: {4} ms | {5}'.format(
+              query.http_status_code, query.result, query.error_code, query.transaction_code, query.server_ellapsed_time, query.response))
     else:
-        print('Succesful operation: HTTP {0} | {1}'.format(query.http_status_code, query.pandora_response))
+        print('HTTP {0} | Response Result is: {1} | [{2}] Server Ellapsed Time: {3} ms | {4}'.format(
+              query.http_status_code, query.result, query.transaction_code, query.server_ellapsed_time, query.response))
 
 if __name__ == '__main__':
     main()

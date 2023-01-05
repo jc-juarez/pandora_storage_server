@@ -109,7 +109,7 @@ namespace pandora {
 
     void ElementContainer::UpdateElementContainerSize(int size) {
         
-        pandora::storage::ReplaceFileLine(pandora::constants::element_container_datafile_size_index + 1, GetElementContainerDataFilePath(), std::to_string(size));
+        pandora::storage::RemoveOrReplaceFileLine(pandora::constants::RemoveOrReplace::Replace, pandora::constants::element_container_datafile_size_index + 1, GetElementContainerDataFilePath(), std::to_string(size));
         m_element_container_size = size;
 
     }
@@ -124,8 +124,8 @@ namespace pandora {
             if(increased_round_robin_index == GetShardSegmentSize()) increased_round_robin_index = 0;
         }
 
-        pandora::storage::ReplaceFileLine(pandora::constants::element_container_datafile_round_robin_index_index + 1, 
-                                          GetElementContainerDataFilePath(), std::to_string(increased_round_robin_index));
+        pandora::storage::RemoveOrReplaceFileLine(pandora::constants::RemoveOrReplace::Replace, pandora::constants::element_container_datafile_round_robin_index_index + 1, 
+                                                  GetElementContainerDataFilePath(), std::to_string(increased_round_robin_index));
 
         m_round_robin_index = increased_round_robin_index; 
         

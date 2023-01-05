@@ -10,15 +10,12 @@
 
 namespace pandora {
 
-    ElementContainerCache::ElementContainerCache() {}
+    ElementContainerCache::ElementContainerCache() {
 
-    void ElementContainerCache::LockSharedDeleteElementContainerOperation() { m_delete_element_container_mutex.lock_shared(); }
+        // Initial Live Memory Filling
+        InitialLiveMemoryFilling();
 
-    void ElementContainerCache::UnlockSharedDeleteElementContainerOperation() { m_delete_element_container_mutex.unlock_shared(); }
-
-    void ElementContainerCache::LockExclusiveDeleteElementContainerOperation() { m_delete_element_container_mutex.lock(); }
-
-    void ElementContainerCache::UnlockExclusiveDeleteElementContainerOperation() { m_delete_element_container_mutex.unlock(); }
+    }
 
     void ElementContainerCache::InitialLiveMemoryFilling() {}
 

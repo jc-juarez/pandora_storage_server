@@ -226,7 +226,7 @@ namespace pandora {
             bool element_exists = search_result.first != pandora::constants::not_found_string ? true : false; 
             if(element_exists) {
                 // Remove Element
-                pandora::storage::ReplaceFileLine(std::stoi(search_result.first), element_container.GetShard(search_result.second).GetShardStorageFilePath());
+                pandora::storage::RemoveOrReplaceFileLine(pandora::constants::RemoveOrReplace::Remove, std::stoi(search_result.first), element_container.GetShard(search_result.second).GetShardStorageFilePath());
                 // Decrease Shard size
                 int shard_size = element_container.GetShard(search_result.second).GetShardSize();
                 element_container.GetShard(search_result.second).UpdateShardSize(shard_size - 1);
@@ -325,7 +325,7 @@ namespace pandora {
             }
 
             // Remove Element
-            pandora::storage::ReplaceFileLine(std::stoi(search_result.first), element_container.GetShard(search_result.second).GetShardStorageFilePath());
+            pandora::storage::RemoveOrReplaceFileLine(pandora::constants::RemoveOrReplace::Remove, std::stoi(search_result.first), element_container.GetShard(search_result.second).GetShardStorageFilePath());
             // Decrease Shard size
             int shard_size = element_container.GetShard(search_result.second).GetShardSize();
             element_container.GetShard(search_result.second).UpdateShardSize(shard_size - 1);

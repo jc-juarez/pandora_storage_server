@@ -9,12 +9,12 @@
 #ifndef SERVER_UTILITIES_H
 #define SERVER_UTILITIES_H
 
-#include "../storage/core/live-memory/element_container_cache.h"
 #include <httpserver.hpp>
 #include <unordered_map>
 #include <sstream>
 #include <memory>
 #include <string>
+#include <chrono>
 
 namespace pandora {
 
@@ -24,13 +24,18 @@ namespace pandora {
     namespace utilities {
 
         struct RequestData {
+
             std::string transaction_id {};
             std::string request_path {};
             std::string http_method {};
             std::string log {};
+            std::string ellapsed_milliseconds {};
             std::unordered_map<std::string, std::string> arguments {};
             std::stringstream logs_stream {};
-            RequestData(std::string _transaction_id, std::string _request_path, std::string _http_method) : transaction_id(_transaction_id), request_path(_request_path), http_method(_http_method) {}
+            std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point;
+            RequestData(std::string _transaction_id, std::string _request_path, std::string _http_method, std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point) : 
+                        transaction_id(_transaction_id), request_path(_request_path), http_method(_http_method), start_time_point(_start_time_point) {}
+        
         };
 
         struct DateTime {
@@ -48,10 +53,11 @@ namespace pandora {
         void ValidateElementID(RequestData&, pandora::ServerOptions*);
         void ValidateElementValue(RequestData&, pandora::ServerOptions*);
         DateTime GetDateTime();
-        std::string GetRandomString_Size8();
-        std::string GenerateServerSessionID();
+        std::string GetRandomString_Size9();
         std::string GenerateTransactionID();
         std::string GetDateTimeString();
+        std::string GetEllapsedMillisecondsString(std::chrono::time_point<std::chrono::high_resolution_clock>&,
+                                                  std::chrono::time_point<std::chrono::high_resolution_clock>&);
 
         // Functions Templates
         template <typename T> 

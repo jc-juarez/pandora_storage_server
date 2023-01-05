@@ -78,7 +78,7 @@ namespace pandora {
 
     void Shard::UpdateShardSize(int size) {
 
-        pandora::storage::ReplaceFileLine(pandora::constants::shard_datafile_size_index + 1, GetShardDataFilePath(), std::to_string(size));
+        pandora::storage::RemoveOrReplaceFileLine(pandora::constants::RemoveOrReplace:: Replace, pandora::constants::shard_datafile_size_index + 1, GetShardDataFilePath(), std::to_string(size));
         m_shard_size = size;
 
     }

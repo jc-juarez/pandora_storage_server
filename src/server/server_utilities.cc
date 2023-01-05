@@ -14,8 +14,10 @@
 #include "server_options.h"
 #include <httpserver.hpp>
 #include <iostream>
+#include <sstream>
 #include <random>
 #include <string>
+#include <chrono>
 #include <ctime>
 
 namespace pandora {
@@ -24,9 +26,10 @@ namespace pandora {
 
         static std::random_device rd;
         static std::mt19937 seed(rd());
-        static std::uniform_int_distribution<int> range_8(10000000, 99999999);
+        static std::uniform_int_distribution<int> range_9(100000000, 999999999);
 
         DateTime GetDateTime() {
+
             int two_digits {2};
             int initial_position {0};
 
@@ -49,6 +52,7 @@ namespace pandora {
             if(dt.seconds.size() < two_digits) dt.seconds.insert(initial_position, "0");
 
             return dt;
+
         }
 
         void SetEndpoints(httpserver::webserver& pandora_storage_server, std::shared_ptr<pandora::MainData>& main_data) {
@@ -77,15 +81,18 @@ namespace pandora {
         }
 
         void CreateBaseDirectories() {
+
             // Create Pandora Storage Server directory
             pandora::storage::CreateDirectory(pandora::constants::pandora_directory_path);
             // Create logs directory
             pandora::storage::CreateDirectory(pandora::constants::logs_directory_path);
             // Create element containers storage directory
             pandora::storage::CreateDirectory(pandora::constants::element_containers_directory_path);
+
         }
 
         void ValidateElementContainerName(RequestData& request_data, pandora::ServerOptions* server_options) {
+
             // Element Container name should not be empty
             if(request_data.arguments[pandora::constants::element_container_name].empty()) {
                 request_data.log.append("Element Container name cannot be empty.");
@@ -96,9 +103,11 @@ namespace pandora {
                 request_data.log.append("Element Container name exceeds max size of " + std::to_string(pandora::constants::ElementContainerNameMaxSize) + " characters.");
                 server_options->LogError(pandora::constants::ParameterOversizeErrorCode, request_data);
             }
+
         }
 
         void ValidateElementID(RequestData& request_data, pandora::ServerOptions* server_options) {
+
             // Element ID should not be empty
             if(request_data.arguments[pandora::constants::element_id].empty()) {
                 request_data.log.append("Element ID cannot be empty.");
@@ -109,9 +118,11 @@ namespace pandora {
                 request_data.log.append("Element ID exceeds max size of " + std::to_string(pandora::constants::ElementIDMaxSize) + " characters.");
                 server_options->LogError(pandora::constants::ParameterOversizeErrorCode, request_data);
             }
+
         }
 
         void ValidateElementValue(RequestData& request_data, pandora::ServerOptions* server_options) {
+
             // Element Value should not be empty
             if(request_data.arguments[pandora::constants::element_value].empty()) {
                 request_data.log.append("Element Value cannot be empty.");
@@ -122,30 +133,21 @@ namespace pandora {
                 request_data.log.append("Element Value exceeds max size of " + std::to_string(pandora::constants::ElementValueMaxSize) + " characters.");
                 server_options->LogError(pandora::constants::ParameterOversizeErrorCode, request_data);
             }
+
         }
 
-        std::string GetRandomString_Size8() { return std::to_string(range_8(seed)); }
-
-        std::string GenerateServerSessionID() {
-            // Server session ID (8 first digits correspond to date, 8 latter digits are randomly generated)
-            std::string server_session_id {};
-            // Date-Time Identifier
-            DateTime date_time = GetDateTime();
-            server_session_id.append(date_time.year + 
-                                     date_time.month +
-                                     date_time.day + "-");
-            // Random identifier
-            server_session_id.append(GetRandomString_Size8());
-            return server_session_id;
-        }
+        std::string GetRandomString_Size9() { return std::to_string(range_9(seed)); }
 
         std::string GenerateTransactionID() {
+
             std::string transaction_id {};
-            transaction_id.append(GetRandomString_Size8() + "-" + GetRandomString_Size8());
+            transaction_id.append(GetRandomString_Size9() + "-" + GetRandomString_Size9());
             return transaction_id;
+
         }
 
         std::string GetDateTimeString() {
+
             // DateTime as string
             std::string date_time_string {};
             DateTime date_time = GetDateTime();
@@ -156,6 +158,22 @@ namespace pandora {
                                     date_time.minutes + ":" +
                                     date_time.seconds);
             return date_time_string;
+
+        }
+
+        std::string GetEllapsedMillisecondsString(std::chrono::time_point<std::chrono::high_resolution_clock>& start,
+                                                  std::chrono::time_point<std::chrono::high_resolution_clock>& stop) {
+
+            // Convert to nanoseconds duration
+            auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start);
+            
+            double ellapsed_milliseconds = static_cast<double>(duration.count()) / pandora::constants::milliseconds_division;
+
+            std::stringstream ellapsed_milliseconds_sstream {};
+            ellapsed_milliseconds_sstream << ellapsed_milliseconds;
+
+            return ellapsed_milliseconds_sstream.str();
+
         }
 
     }

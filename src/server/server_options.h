@@ -36,7 +36,6 @@ namespace pandora {
             void SetPortNumber(int);
             void SetDebugEnabled(bool);
             void SetLogsEnabled(bool);
-            void SetServerSessionID(std::string);
             void SetLogsFilePath(std::string);
 
         // Getter Methods
@@ -47,6 +46,10 @@ namespace pandora {
             std::string GetServerSessionID() const;
             std::string GetLogsFilePath() const;
 
+        // Private Methods
+        private:
+            void GenerateServerSessionID();
+
         // Server Capabilities
         public:
             void OverrideOptions(const std::vector<std::string>);
@@ -56,7 +59,7 @@ namespace pandora {
             void CreateLogsFile();
             void LogToFile(pandora::utilities::RequestData&);
             void LogToFileThread(const std::string);
-            void LogTransactionStartedFinished(int, pandora::utilities::RequestData&);
+            void LogTransactionStartedFinished(int, pandora::utilities::RequestData&, const std::string = "");
             void LogInfo(pandora::utilities::RequestData&);
             void LogError(int, pandora::utilities::RequestData&);
 

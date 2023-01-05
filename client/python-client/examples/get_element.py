@@ -23,9 +23,10 @@ def main():
     query = pandora_client.get_element(element_container_name=school_grades_element_container, element_id=student_name)
 
     if(query.error):
-        print('Response had error code: {0} | [{1}] {2}'.format(query.pandora_error_code, query.pandora_transaction_code, query.pandora_error_message))
+        print('Error Code: {0} | [{1}] Server Ellapsed Time: {2} ms | {3}'.format(
+              query.error_code, query.transaction_code, query.server_ellapsed_time, query.response))
     else:
-        print('Succesful operation: HTTP {0} | Student {1} has grade: {2}'.format(query.http_status_code, student_name, query.result))
+        print('{0}'.format(query.result))
 
 if __name__ == '__main__':
     main()

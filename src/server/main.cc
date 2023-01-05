@@ -28,9 +28,6 @@ int main(int argc, char** argv) {
                                           pandora::constants::default_debug_enabled,
                                           pandora::constants::default_logs_enabled);
 
-    // Server Session ID
-    server_options.SetServerSessionID(pandora::utilities::GenerateServerSessionID());
-
     // Command-line arguments for server startup override
     // p={Port Number: #} d={Debug enabled: off} l={Logs enabled: off}
     std::vector<std::string> args(argv, argv + argc);
@@ -55,20 +52,15 @@ int main(int argc, char** argv) {
     // Start Pandora Storage Server in non-blocking mode
     pandora_storage_server.start(false);
 
-    // Initial Live Memory Filling
-    main_cache->InitialLiveMemoryFilling();
-
     // Server startup messages
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";
     std::cout << "<> Debug mode: " << (server_options.GetDebugEnabled() ? std::string("Enabled") : std::string("Disabled")) << "\n";
-    std::cout << "<> Logs: " + (server_options.GetLogsEnabled() ? std::string("Enabled") : std::string("Disabled")) << "\n";;
-    std::cout << "<> Server Session ID: " + server_options.GetServerSessionID() << "\n";
+    std::cout << "<> Logs: " << (server_options.GetLogsEnabled() ? std::string("Enabled") : std::string("Disabled")) << "\n";;
+    std::cout << "<> Server Session ID: " << server_options.GetServerSessionID() << "\n";
     
     // Logs file
-    if(server_options.GetLogsEnabled()) {
-        server_options.CreateLogsFile();
+    if(server_options.GetLogsEnabled())
         std::cout << "<> Logs will be recorded at file: " << server_options.GetLogsFilePath() << "\n";
-    }
 
     std::cout << "\n* Running on port: " << server_options.GetPortNumber() << "\n\n";
 
@@ -76,4 +68,5 @@ int main(int argc, char** argv) {
     for(;;) {}
     
     return 0;
+
 }

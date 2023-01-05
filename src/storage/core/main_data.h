@@ -9,6 +9,7 @@
 #ifndef MAIN_DATA_H
 #define MAIN_DATA_H
 
+#include "live-memory/element_container_cache.h"
 #include "element_container.h"
 #include <unordered_map>
 #include <shared_mutex>
@@ -26,6 +27,10 @@ namespace pandora {
         // Constructor
         public:
             MainData(std::shared_ptr<ElementContainerCache>&, ServerOptions*);
+
+        // No Copy Constructor
+        public:
+            MainData(const MainData&) = delete;
 
         // Properties
         private:

@@ -15,16 +15,38 @@
 #include <thread>
 #include <string>
 #include <vector>
+#include <chrono>
 
 namespace pandora {
 
         // Constructor
         ServerOptions::ServerOptions(int port_number, bool debug_enabled, bool logs_enabled) {
+
             m_port_number = port_number;
             m_debug_enabled = debug_enabled;
             m_logs_enabled = logs_enabled;
             m_server_session_id = "";
             m_logs_file_path = "";
+
+            // Generate Server Session Identifier
+            GenerateServerSessionID();
+
+            // Create Logs file for Server Session
+            CreateLogsFile();
+
+        }
+
+        void ServerOptions::GenerateServerSessionID() {
+
+            // Server session ID (8 first digits correspond to date, 9 latter digits are randomly generated)
+            // Date-Time Identifier
+            pandora::utilities::DateTime date_time = pandora::utilities::GetDateTime();
+            m_server_session_id.append(date_time.year + 
+                                     date_time.month +
+                                     date_time.day + "-");
+            // Random identifier
+            m_server_session_id.append(pandora::utilities::GetRandomString_Size9());
+
         }
 
         // Setter Methods
@@ -34,8 +56,6 @@ namespace pandora {
         void ServerOptions::SetDebugEnabled(bool debug_enabled) { m_debug_enabled = debug_enabled; }
 
         void ServerOptions::SetLogsEnabled(bool logs_enabled) { m_logs_enabled = logs_enabled; }
-
-        void ServerOptions::SetServerSessionID(std::string server_session_id) { m_server_session_id = server_session_id; }
 
         void ServerOptions::SetLogsFilePath(std::string logs_file_path) { m_logs_file_path = logs_file_path; }
 
@@ -120,10 +140,11 @@ namespace pandora {
             write_logs_mutex.unlock();
         }
 
-        void ServerOptions::LogTransactionStartedFinished(int server_code, pandora::utilities::RequestData& request_data) {
+        void ServerOptions::LogTransactionStartedFinished(int server_code, pandora::utilities::RequestData& request_data, const std::string ellapsed_milliseconds) {
             std::string log {};
             log.append("[" + request_data.transaction_id + "] ");
-            log.append(server_code == constants::TransactionStartedCode ? "Started (1) " : "Finished (0) ");
+            log.append(server_code == constants::TransactionStartedCode ? "Started <1> " : "Finished <0> ");
+            if(server_code == pandora::constants::TransactionFinishedCode) log.append("{Ellapsed time: " + ellapsed_milliseconds + " ms} ");
             log.append(pandora::utilities::GetDateTimeString() + " -> " + request_data.http_method + " " + request_data.request_path);
             DebugLog(log, request_data.logs_stream);
         }
@@ -131,21 +152,30 @@ namespace pandora {
         void ServerOptions::LogInfo(pandora::utilities::RequestData& request_data) {
             std::string log {};
             log.append("[" + request_data.transaction_id + "] ");
-            log.append("Info (" + std::to_string(pandora::constants::TransactionInfoCode) + ") " + pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
+            log.append("Info <" + std::to_string(pandora::constants::TransactionInfoCode) + "> " + pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
             DebugLog(log, request_data.logs_stream);
             request_data.log.clear();
         }
 
         void ServerOptions::LogError(int error_code, pandora::utilities::RequestData& request_data) {
+
+            auto stop = std::chrono::high_resolution_clock::now();
+            std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(request_data.start_time_point, stop);
+            request_data.ellapsed_milliseconds = ellapsed_milliseconds;
+
             std::string log {};
             log.append("[" + request_data.transaction_id + "] ");
-            log.append("Error (" + std::to_string(error_code) + ") " + pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
+
+            log.append("Error <" + std::to_string(error_code) + "> " + "{Ellapsed time: " + request_data.ellapsed_milliseconds + " ms} " + 
+                        pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
+
             DebugLog(log, request_data.logs_stream);
             LogToFile(request_data);
             std::string error {};
-            error.append(std::to_string(error_code) + "-Error " + "[" + request_data.transaction_id + "]" + ": " + request_data.log);
+            error.append("Error <" + std::to_string(error_code) + "> | " + request_data.log);
             request_data.log.clear();
             throw std::runtime_error(error);
+
         }
 
 } // namespace pandora

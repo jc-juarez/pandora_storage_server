@@ -42,7 +42,7 @@ namespace pandora {
 
         }
 
-        void ReplaceFileLine(int line_number, const std::string& file_path, const std::string replacement) {
+        void RemoveOrReplaceFileLine(pandora::constants::RemoveOrReplace remove_or_replace, int line_number, const std::string& file_path, const std::string replacement) {
             
             if(line_number == pandora::constants::not_found_int) return;
 
@@ -60,13 +60,12 @@ namespace pandora {
 
             std::ofstream write_file;
             std::string temp_file_name {"tempfile-"};
-            temp_file_name.append(pandora::utilities::GetRandomString_Size8() + ".txt");
+            temp_file_name.append(pandora::utilities::GetRandomString_Size9() + ".txt");
             write_file.open(temp_file_name);
 
             for(size_t i = 0; i < lines.size(); ++i) {
                 if(i == line_number) {
-                    // If no replacement argument was given the line will be deleted
-                    if(replacement.empty()) continue;
+                    if(remove_or_replace == pandora::constants::RemoveOrReplace::Remove) continue;
                     write_file << replacement << std::endl; 
                 } else {
                     write_file << lines[i] << std::endl; 

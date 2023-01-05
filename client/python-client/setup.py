@@ -9,7 +9,7 @@
 from setuptools import setup
 from pathlib import Path
 
-VERSION = '0.1.2'
+VERSION = '0.1.3'
 DESCRIPTION = 'Pandora Storage Server Client.'
 
 # Read Content of README file

@@ -16,14 +16,22 @@ namespace pandora {
     namespace constants {
 
         // Enum Classes
+        // FileOperation options
         enum class FileOption {
             Append,
             Create
         };
 
+        // GetLineOrElementValue options
         enum class LineValueOption {
             Line,
             Value
+        };
+
+        // RemoveOrReplaceFileLine options
+        enum class RemoveOrReplace {
+            Remove,
+            Replace
         };
 
         // Default options
@@ -49,6 +57,7 @@ namespace pandora {
         inline constexpr int number_shards {100};
         inline constexpr int number_search_threads {10};
         inline constexpr int not_found_int {-1};
+        inline constexpr double milliseconds_division {1000000};
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};
         inline constexpr char logs_enabled_option {'l'};
