@@ -7,4 +7,4 @@
 # *************************************
 
 from .pandora_client import PandoraClient
-from .pandora_client import ResponseObject
+from .pandora_client import PandoraResponse

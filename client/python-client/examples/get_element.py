@@ -26,7 +26,7 @@ def main():
         print('Error Code: {0} | [{1}] Server Ellapsed Time: {2} ms | {3}'.format(
               query.error_code, query.transaction_code, query.server_ellapsed_time, query.response))
     else:
-        print('{0}'.format(query.result))
+        print('Student {0} has grade: {1}'.format(student_name, query.result))
 
 if __name__ == '__main__':
     main()
