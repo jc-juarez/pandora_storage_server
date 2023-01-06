@@ -5,12 +5,21 @@ Pandora Storage Server is an HTTP Server for Key-Value Pair Element Containers i
 How to Install Pandora Storage Server
 ==========
 
-For installing Pandora Storage Server in a GNU/Linux distribution run the following commands in the terminal:
+For installing Pandora Storage Server in a GNU/Linux distribution run the following commands in the terminal.
 
-First make sure you have the [GNU libmicrohttpd library](https://www.gnu.org/software/libmicrohttpd/) installed in your system; for Debian-based Operating Systems run:
+First, on Debian-based Operating Systems perform an apt-get update:
+
+```shell
+sudo apt-get update
+```
+
+Then make sure you have the [GNU libmicrohttpd library](https://www.gnu.org/software/libmicrohttpd/) installed in your system as well as the cURL library; for Debian-based Operating Systems run:
 
 ```shell
 sudo apt-get install -y libmicrohttpd-dev
+```
+```shell
+sudo apt install curl
 ```
 
 For Debian-based Operating Systems run the following command to download the Pandora Storage Server .deb package:
