@@ -13,13 +13,16 @@ First, on Debian-based Operating Systems perform an apt-get update:
 sudo apt-get update
 ```
 
-Then make sure you have the [GNU libmicrohttpd library](https://www.gnu.org/software/libmicrohttpd/) installed in your system as well as the cURL library; for Debian-based Operating Systems run:
+Then make sure you have the [GNU libmicrohttpd library](https://www.gnu.org/software/libmicrohttpd/) installed in your system as well as the cURL library and Python3; in case you need any of these for Debian-based Operating Systems run:
 
 ```shell
 sudo apt-get install -y libmicrohttpd-dev
 ```
 ```shell
 sudo apt install curl
+```
+```shell
+sudo apt install python3
 ```
 
 For Debian-based Operating Systems run the following command to download the Pandora Storage Server .deb package:
