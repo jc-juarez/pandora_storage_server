@@ -16,7 +16,7 @@ sudo apt-get install -y libmicrohttpd-dev
 For Debian-based Operating Systems run the following command to download the Pandora Storage Server .deb package:
 
 ```shell
-curl -LJO `curl -s https://api.github.com/repos/jc-juarez/pandora_storage_server/releases/latest | python3  -c 'import sys, json; print(json.load(sys.stdin)["assets"][0]["browser_download_url"])'`
+curl -LJO `curl -s https://api.github.com/repos/jc-juarez/pandora_storage_server/releases/latest | python3  -c 'import sys, json; print(json.load(sys.stdin)["assets"][1]["browser_download_url"])'`
 ```
 
 And finally install the .deb package in your system:
