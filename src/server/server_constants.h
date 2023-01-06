@@ -61,6 +61,8 @@ namespace pandora {
         inline constexpr char port_number_option {'p'};
         inline constexpr char debug_enabled_option {'d'};
         inline constexpr char logs_enabled_option {'l'};
+        inline const std::string pandora {"pandora"};
+        inline const std::string sudo {"sudo"};
         inline const std::string not_found_string {""};
         inline const std::string off_option {"off"};
         inline const std::string http_put {"PUT"};

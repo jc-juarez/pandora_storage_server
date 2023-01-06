@@ -87,6 +87,9 @@ namespace pandora {
                 // Care for malformed commands
                 if(command.size() < minimum_command_size) continue;
 
+                // Ignore keywords commands
+                if(command == pandora::constants::pandora || command == pandora::constants::sudo) continue;
+
                 char command_option {command[option_command_index]};
                 std::string option_value {command.substr(option_value_index)};
 

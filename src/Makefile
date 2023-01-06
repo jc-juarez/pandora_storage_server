@@ -47,4 +47,6 @@ shard.o: ./storage/core/shard.cc ./storage/core/shard.h
 
 clean:
 	-rm *.o
+	-rm *.deb
 	-rm -r build
+	-rm -r pandora-storage-server-pkg
