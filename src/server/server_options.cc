@@ -31,9 +31,6 @@ namespace pandora {
             // Generate Server Session Identifier
             GenerateServerSessionID();
 
-            // Create Logs file for Server Session
-            CreateLogsFile();
-
         }
 
         void ServerOptions::GenerateServerSessionID() {
@@ -106,6 +103,9 @@ namespace pandora {
                 }
 
             }
+
+            // Create Logs file for Server Session if option selected
+            if(GetLogsEnabled()) CreateLogsFile();
             
         }
 
