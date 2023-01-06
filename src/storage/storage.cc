@@ -74,10 +74,11 @@ namespace pandora {
 
             write_file.close();
 
-            const char* element_container_storage_path_cstring = file_path.c_str();
+            const char* file_path_cstring = file_path.c_str();
             const char* temp_file_name_cstring = temp_file_name.c_str();
-            std::remove(element_container_storage_path_cstring);
-            std::rename(temp_file_name_cstring, element_container_storage_path_cstring);
+            std::remove(file_path_cstring);
+            std::rename(temp_file_name_cstring, file_path_cstring);
+
         }
 
     }
