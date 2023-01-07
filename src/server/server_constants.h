@@ -77,7 +77,7 @@ namespace pandora {
         inline const std::string shard {"shard"};
         inline const std::string shards {"shards"};
         inline const std::string pandora_directory_path {"/var/lib/pandora"};
-        inline const std::string logs_directory_path {"/var/lib/pandora/logs"};
+        inline const std::string logs_directory_path {"/var/log/pandora"};
         inline const std::string element_containers_directory_path {"/var/lib/pandora/element-containers"};
 
         // Validation and Restrictions
