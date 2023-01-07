@@ -33,6 +33,20 @@ int main(int argc, char** argv) {
     std::vector<std::string> args(argv, argv + argc);
     server_options.OverrideOptions(args);
 
+    // Non-Debug mode
+    if(!server_options.GetDebugEnabled()) {
+
+        // Daemonize process
+        int daemon_result = daemon(1, 1);
+
+        // Check for daemon result
+        if(daemon_result == -1) {
+            std::cout << "\n<!> Pandora Storage Server encountered an error while trying to daemonize the process for Non-Debug mode.\n\n" << std::endl;
+            return -1;
+        }
+
+    }
+
     // Server creation
     httpserver::webserver pandora_storage_server = httpserver::create_webserver(server_options.GetPortNumber())
                                .not_found_resource(pandora::endpoints::resource_not_found)
@@ -54,7 +68,7 @@ int main(int argc, char** argv) {
 
     // Server startup messages
     std::cout << "\n<<< Pandora Storage Server >>>\n\n";
-    std::cout << "<> Debug mode: " << (server_options.GetDebugEnabled() ? std::string("Enabled") : std::string("Disabled")) << "\n";
+    std::cout << "<> Debug mode: " << (server_options.GetDebugEnabled() ? std::string("Enabled") : std::string("Disabled - PID: " + std::to_string(getpid()))) << "\n";
     std::cout << "<> Logs: " << (server_options.GetLogsEnabled() ? std::string("Enabled") : std::string("Disabled")) << "\n";;
     std::cout << "<> Server Session ID: " << server_options.GetServerSessionID() << "\n";
     
