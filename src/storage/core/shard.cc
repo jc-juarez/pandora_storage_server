@@ -61,7 +61,7 @@ namespace pandora {
 
         // Fill Data File
         pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, std::to_string(GetShardSize()) + "\n");
-        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardName() + "\n");
+        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardPath() + "\n");
 
     }
 

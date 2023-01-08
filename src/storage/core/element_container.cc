@@ -78,7 +78,7 @@ namespace pandora {
         // Fill Data File
         pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, std::to_string(GetElementContainerSize()) + "\n");
         pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, std::to_string(GetRoundRobinIndex()) + "\n");
-        pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, GetElementContainerName() + "\n");
+        pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, GetElementContainerPath() + "\n");
 
     }
 

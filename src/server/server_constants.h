@@ -45,9 +45,9 @@ namespace pandora {
         inline constexpr int http_internal_error {500};
         inline constexpr int element_container_datafile_size_index {0};
         inline constexpr int element_container_datafile_round_robin_index_index {1};
-        inline constexpr int element_container_datafile_name_index {2};
+        inline constexpr int element_container_datafile_path_index {2};
         inline constexpr int shard_datafile_size_index {0};
-        inline constexpr int shard_datafile_name_index {1};
+        inline constexpr int shard_datafile_path_index {1};
         inline constexpr int number_shards {200};
         inline constexpr int number_search_threads {20};
         inline constexpr int element_container_data_file_size {3};
