@@ -9,6 +9,7 @@
 #ifndef SERVER_UTILITIES_H
 #define SERVER_UTILITIES_H
 
+#include "server_constants.h"
 #include <httpserver.hpp>
 #include <unordered_map>
 #include <sstream>
@@ -23,17 +24,19 @@ namespace pandora {
 
     namespace utilities {
 
-        struct RequestData {
+        struct TransactionData {
 
             std::string transaction_id {};
             std::string request_path {};
             std::string http_method {};
             std::string log {};
             std::string ellapsed_milliseconds {};
+            std::string error_message {};
+            int error_code {pandora::constants::not_found_int};
             std::unordered_map<std::string, std::string> arguments {};
             std::stringstream logs_stream {};
             std::chrono::time_point<std::chrono::high_resolution_clock> start_time_point;
-            RequestData(std::string _transaction_id, std::string _request_path, std::string _http_method, std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point) : 
+            TransactionData(std::string _transaction_id, std::string _request_path, std::string _http_method, std::chrono::time_point<std::chrono::high_resolution_clock> _start_time_point) : 
                         transaction_id(_transaction_id), request_path(_request_path), http_method(_http_method), start_time_point(_start_time_point) {}
         
         };
@@ -49,9 +52,9 @@ namespace pandora {
 
         void SetEndpoints(httpserver::webserver&, std::shared_ptr<pandora::MainData>&);
         void CreateBaseDirectories();
-        void ValidateElementContainerName(RequestData&, pandora::ServerOptions*);
-        void ValidateElementID(RequestData&, pandora::ServerOptions*);
-        void ValidateElementValue(RequestData&, pandora::ServerOptions*);
+        void ValidateElementContainerName(TransactionData&, pandora::ServerOptions*);
+        void ValidateElementID(TransactionData&, pandora::ServerOptions*);
+        void ValidateElementValue(TransactionData&, pandora::ServerOptions*);
         DateTime GetDateTime();
         std::string GetRandomString_Size9();
         std::string GenerateTransactionID();

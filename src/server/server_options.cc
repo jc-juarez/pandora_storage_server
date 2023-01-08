@@ -125,8 +125,8 @@ namespace pandora {
             pandora::storage::FileOperation(GetLogsFilePath(), pandora::constants::FileOption::Create);
         }
 
-        void ServerOptions::LogToFile(pandora::utilities::RequestData& request_data) {
-            std::string log_content {request_data.logs_stream.str()};
+        void ServerOptions::LogToFile(pandora::utilities::TransactionData& transaction_data) {
+            std::string log_content {transaction_data.logs_stream.str()};
             std::thread write_logs_thread(&ServerOptions::LogToFileThread, this, log_content);
             write_logs_thread.detach();
         }
@@ -143,40 +143,40 @@ namespace pandora {
             write_logs_mutex.unlock();
         }
 
-        void ServerOptions::LogTransactionStartedFinished(int server_code, pandora::utilities::RequestData& request_data, const std::string ellapsed_milliseconds) {
+        void ServerOptions::LogTransactionStartedFinished(int server_code, pandora::utilities::TransactionData& transaction_data, const std::string ellapsed_milliseconds) {
             std::string log {};
-            log.append("[" + request_data.transaction_id + "] ");
+            log.append("[" + transaction_data.transaction_id + "] ");
             log.append(server_code == constants::TransactionStartedCode ? "Started <1> " : "Finished <0> ");
             if(server_code == pandora::constants::TransactionFinishedCode) log.append("{Ellapsed time: " + ellapsed_milliseconds + " ms} ");
-            log.append(pandora::utilities::GetDateTimeString() + " -> " + request_data.http_method + " " + request_data.request_path);
-            DebugLog(log, request_data.logs_stream);
+            log.append(pandora::utilities::GetDateTimeString() + " -> " + transaction_data.http_method + " " + transaction_data.request_path);
+            DebugLog(log, transaction_data.logs_stream);
         }
 
-        void ServerOptions::LogInfo(pandora::utilities::RequestData& request_data) {
+        void ServerOptions::LogInfo(pandora::utilities::TransactionData& transaction_data) {
             std::string log {};
-            log.append("[" + request_data.transaction_id + "] ");
-            log.append("Info <" + std::to_string(pandora::constants::TransactionInfoCode) + "> " + pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
-            DebugLog(log, request_data.logs_stream);
-            request_data.log.clear();
+            log.append("[" + transaction_data.transaction_id + "] ");
+            log.append("Info <" + std::to_string(pandora::constants::TransactionInfoCode) + "> " + pandora::utilities::GetDateTimeString() + " -> " + transaction_data.log);
+            DebugLog(log, transaction_data.logs_stream);
+            transaction_data.log.clear();
         }
 
-        void ServerOptions::LogError(int error_code, pandora::utilities::RequestData& request_data) {
+        void ServerOptions::LogError(int error_code, pandora::utilities::TransactionData& transaction_data) {
 
             auto stop = std::chrono::high_resolution_clock::now();
-            std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(request_data.start_time_point, stop);
-            request_data.ellapsed_milliseconds = ellapsed_milliseconds;
+            std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(transaction_data.start_time_point, stop);
+            transaction_data.ellapsed_milliseconds = ellapsed_milliseconds;
 
             std::string log {};
-            log.append("[" + request_data.transaction_id + "] ");
+            log.append("[" + transaction_data.transaction_id + "] ");
 
-            log.append("Error <" + std::to_string(error_code) + "> " + "{Ellapsed time: " + request_data.ellapsed_milliseconds + " ms} " + 
-                        pandora::utilities::GetDateTimeString() + " -> " + request_data.log);
+            log.append("Error <" + std::to_string(error_code) + "> " + "{Ellapsed time: " + transaction_data.ellapsed_milliseconds + " ms} " + 
+                        pandora::utilities::GetDateTimeString() + " -> " + transaction_data.log);
 
-            DebugLog(log, request_data.logs_stream);
-            LogToFile(request_data);
+            DebugLog(log, transaction_data.logs_stream);
+            LogToFile(transaction_data);
             std::string error {};
-            error.append("Error <" + std::to_string(error_code) + "> | " + request_data.log);
-            request_data.log.clear();
+            error.append("Error <" + std::to_string(error_code) + "> | " + transaction_data.log);
+            transaction_data.log.clear();
             throw std::runtime_error(error);
 
         }

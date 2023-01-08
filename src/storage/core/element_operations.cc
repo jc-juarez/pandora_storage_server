@@ -74,7 +74,7 @@ namespace pandora {
 
         }
 
-        std::string GetElementLineOrValue(pandora::constants::LineValueOption line_value_option, const std::string& element_id, const std::string& element_container_storage_path, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data, std::shared_ptr<std::atomic_bool>& stop_search_threads_flag) {
+        std::string GetElementLineOrValue(pandora::constants::LineValueOption line_value_option, const std::string& element_id, const std::string& element_container_storage_path, pandora::ServerOptions* server_options, pandora::utilities::TransactionData& transaction_data, std::shared_ptr<std::atomic_bool>& stop_search_threads_flag) {
 
             // Reference Element Container Storage File
             std::ifstream element_container_storage_file(element_container_storage_path, std::ios::in);
@@ -119,18 +119,18 @@ namespace pandora {
 
                 // Error catching on Element Container traversal
                 delete[] element;
-                request_data.log.append("An Error ocurred while trying to find an Element from the required Element Container.");
-                server_options->LogError(pandora::constants::ElementStorageError, request_data);
+                transaction_data.log.append("An Error ocurred while trying to find an Element from the required Element Container.");
+                server_options->LogError(pandora::constants::ElementStorageError, transaction_data);
 
             }
 
             return pandora::constants::not_found_string;
         }
 
-        std::pair<std::string, int> SearchElementInterface(pandora::constants::LineValueOption line_value_option, std::vector<std::string> shard_segment, const std::string& element_id, pandora::ServerOptions* server_options, pandora::utilities::RequestData& request_data, std::shared_ptr<std::atomic_bool>& stop_search_threads_flag) {
+        std::pair<std::string, int> SearchElementInterface(pandora::constants::LineValueOption line_value_option, std::vector<std::string> shard_segment, const std::string& element_id, pandora::ServerOptions* server_options, pandora::utilities::TransactionData& transaction_data, std::shared_ptr<std::atomic_bool>& stop_search_threads_flag) {
 
             for(int shard_subindex = 0; shard_subindex < shard_segment.size(); ++shard_subindex) {
-                std::string result = GetElementLineOrValue(line_value_option, element_id, shard_segment[shard_subindex], server_options, request_data, stop_search_threads_flag);
+                std::string result = GetElementLineOrValue(line_value_option, element_id, shard_segment[shard_subindex], server_options, transaction_data, stop_search_threads_flag);
                 if(result != pandora::constants::not_found_string) return {result, shard_subindex};
             }
 
@@ -138,7 +138,7 @@ namespace pandora {
 
         }
 
-        std::pair<std::string, int> WaitForSearchResult(pandora::constants::LineValueOption line_value_option, std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data, ElementContainer& element_container, const std::string& element_id, int shard_segment_size) {
+        std::pair<std::string, int> WaitForSearchResult(pandora::constants::LineValueOption line_value_option, std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::TransactionData& transaction_data, ElementContainer& element_container, const std::string& element_id, int shard_segment_size) {
 
             // Initialize Search Threads flag 
             std::shared_ptr<std::atomic_bool> stop_search_threads_flag = std::make_shared<std::atomic_bool>(false);
@@ -158,7 +158,7 @@ namespace pandora {
                 }
 
                 search_threads[segment_thread_index] = std::async(std::launch::async, SearchElementInterface, line_value_option, shard_segment,
-                                                                  std::ref(element_id), main_data->GetServerOptions(), std::ref(request_data), std::ref(stop_search_threads_flag));
+                                                                  std::ref(element_id), main_data->GetServerOptions(), std::ref(transaction_data), std::ref(stop_search_threads_flag));
 
             }
 
@@ -185,24 +185,24 @@ namespace pandora {
 
         }
 
-        void SetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
+        void SetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::TransactionData& transaction_data) {
             
             // Set Element on Disk
             // Lock Shared operation
             main_data->LockSharedElementContainerOperations();
 
             // Element Container name
-            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            std::string element_container_name {transaction_data.arguments[pandora::constants::element_container_name]};
             // Element ID
-            std::string element_id {request_data.arguments[pandora::constants::element_id]};
+            std::string element_id {transaction_data.arguments[pandora::constants::element_id]};
             // Element Value
-            std::string element_value {request_data.arguments[pandora::constants::element_value]};
+            std::string element_value {transaction_data.arguments[pandora::constants::element_value]};
 
             // Check if Element Container does not exist 
             if(!main_data->ElementContainerExists(element_container_name)) {
-                request_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
+                transaction_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
                                          element_id + "' could not be set.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, transaction_data);
             }
 
             // Element Container instance
@@ -213,14 +213,14 @@ namespace pandora {
 
             // Check if Element Container exceeds capacity
             if(element_container.GetElementContainerSize() == pandora::constants::ElementContainerMaxCapacity) {
-                request_data.log.append("Element Container '" + element_container.GetElementContainerName() + "' has reached the max number of Elements (" + 
+                transaction_data.log.append("Element Container '" + element_container.GetElementContainerName() + "' has reached the max number of Elements (" + 
                                          std::to_string(pandora::constants::ElementContainerMaxCapacity) + ") and cannot add more Elements.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerFull, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerFull, transaction_data);
             }
 
             // Launch Search Threads and Wait for search result (pair maps Element Line to Shard Index)
             std::pair<std::string, int> search_result = WaitForSearchResult(pandora::constants::LineValueOption::Line, main_data, 
-                                                                            request_data, element_container, element_id, element_container.GetShardSegmentSize());
+                                                                            transaction_data, element_container, element_id, element_container.GetShardSegmentSize());
 
             // Remove previous element if already exists
             bool element_exists = search_result.first != pandora::constants::not_found_string ? true : false; 
@@ -248,9 +248,9 @@ namespace pandora {
             while(element_container.GetShard(element_container.GetRoundRobinIndex()).GetShardSize() == pandora::constants::ShardMaxCapacity) {
 
                 if(full_shards_count == pandora::constants::number_shards) {
-                    request_data.log.append("Element Container '" + element_container.GetElementContainerName() + "' has reached the max number of Elements (" + 
+                    transaction_data.log.append("Element Container '" + element_container.GetElementContainerName() + "' has reached the max number of Elements (" + 
                                              std::to_string(pandora::constants::ElementContainerMaxCapacity) + ") and cannot add more Elements.");
-                    main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerFull, request_data);
+                    main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerFull, transaction_data);
                 }
 
                 ++full_shards_count;
@@ -272,9 +272,9 @@ namespace pandora {
             element_container.IncreaseRoundRobinIndex();
 
             // Log Element succesful element set
-            request_data.log.append("Element '" + element_id + "' has been set inside the Element Container '" +
+            transaction_data.log.append("Element '" + element_id + "' has been set inside the Element Container '" +
                                      element_container_name + "'.");
-            main_data->GetServerOptions()->LogInfo(request_data);
+            main_data->GetServerOptions()->LogInfo(transaction_data);
 
             // Unlock Exclusive Operation
             element_container.UnlockExclusiveElementOperations();
@@ -286,22 +286,22 @@ namespace pandora {
             
         }
 
-        void DeleteElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
+        void DeleteElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::TransactionData& transaction_data) {
             
             // Delete Element on Disk
             // Lock Shared operation
             main_data->LockSharedElementContainerOperations();
 
             // Element Container name
-            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            std::string element_container_name {transaction_data.arguments[pandora::constants::element_container_name]};
             // Element ID
-            std::string element_id {request_data.arguments[pandora::constants::element_id]};
+            std::string element_id {transaction_data.arguments[pandora::constants::element_id]};
 
             // Check if Element Container does not exist 
             if(!main_data->ElementContainerExists(element_container_name)) {
-                request_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
+                transaction_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
                                          element_id + "' could not be deleted.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, transaction_data);
             }
 
             // Element Container instance
@@ -312,16 +312,16 @@ namespace pandora {
 
             // Launch Search Threads and Wait for search result (pair maps Element Line to Shard Index)
             std::pair<std::string, int> search_result = WaitForSearchResult(pandora::constants::LineValueOption::Line, main_data, 
-                                                                            request_data, element_container, element_id, element_container.GetShardSegmentSize());
+                                                                            transaction_data, element_container, element_id, element_container.GetShardSegmentSize());
 
             // Determine if the Element exists
             bool element_exists = search_result.first != pandora::constants::not_found_string ? true : false; 
 
             // Check if Element exists
             if(!element_exists) {
-                request_data.log.append("Element Container '" + element_container_name + "' does not contain Element '" +
+                transaction_data.log.append("Element Container '" + element_container_name + "' does not contain Element '" +
                                          element_id + "'.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementNotExists, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementNotExists, transaction_data);
             }
 
             // Remove Element
@@ -334,9 +334,9 @@ namespace pandora {
             element_container.UpdateElementContainerSize(element_container.GetElementContainerSize() - 1);
 
             // Log Element succesful element removal
-            request_data.log.append("Element '" + element_id + "' has been deleted from the Element Container '" +
+            transaction_data.log.append("Element '" + element_id + "' has been deleted from the Element Container '" +
                                      element_container_name + "'.");
-            main_data->GetServerOptions()->LogInfo(request_data);
+            main_data->GetServerOptions()->LogInfo(transaction_data);
 
             // Unlock Exclusive Operation
             element_container.UnlockExclusiveElementOperations();
@@ -348,7 +348,7 @@ namespace pandora {
             
         }
 
-        std::string GetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
+        std::string GetElement(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::TransactionData& transaction_data) {
 
             // Retrieve from Live Memory
 
@@ -357,15 +357,15 @@ namespace pandora {
             main_data->LockSharedElementContainerOperations();
 
             // Element Container name
-            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            std::string element_container_name {transaction_data.arguments[pandora::constants::element_container_name]};
             // Element ID
-            std::string element_id {request_data.arguments[pandora::constants::element_id]};
+            std::string element_id {transaction_data.arguments[pandora::constants::element_id]};
 
             // Check if Element Container does not exist 
             if(!main_data->ElementContainerExists(element_container_name)) {
-                request_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
+                transaction_data.log.append("Element Container '" + element_container_name + "' does not exist and Element '" +
                                          element_id + "' could not be retrieved.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, transaction_data);
             }
 
             // Element Container instance
@@ -376,21 +376,21 @@ namespace pandora {
 
             // Launch Search Threads and Wait for search result (pair maps Element Value to Shard Index)
             std::pair<std::string, int> search_result = WaitForSearchResult(pandora::constants::LineValueOption::Value, main_data, 
-                                                                            request_data, element_container, element_id, element_container.GetShardSegmentSize());
+                                                                            transaction_data, element_container, element_id, element_container.GetShardSegmentSize());
 
             // Assign Element Value
             std::string element_value = search_result.first;
 
             // Check if Element exists
             if(element_value == pandora::constants::not_found_string) {
-                request_data.log.append("Element Container '" + element_container_name + "' does not contain Element '" +
+                transaction_data.log.append("Element Container '" + element_container_name + "' does not contain Element '" +
                                          element_id + "'.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementNotExists, request_data);
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementNotExists, transaction_data);
             }
 
             // Log succesful element retrieval
-            request_data.log.append("Element '" + element_id + "' has value: '" + element_value + "'.");
-            main_data->GetServerOptions()->LogInfo(request_data);
+            transaction_data.log.append("Element '" + element_id + "' has value: '" + element_value + "'.");
+            main_data->GetServerOptions()->LogInfo(transaction_data);
 
             // Unlock shared operations
             element_container.UnlockSharedElementOperations();

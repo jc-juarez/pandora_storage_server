@@ -23,7 +23,7 @@ namespace pandora {
 
     namespace core {
 
-        void CreateElementContainer(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
+        void CreateElementContainer(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::TransactionData& transaction_data) {
     
             // Check for Element Container in Live Memory
             
@@ -32,27 +32,27 @@ namespace pandora {
             main_data->LockExclusiveElementContainerOperations();
 
             // Element Container name
-            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            std::string element_container_name {transaction_data.arguments[pandora::constants::element_container_name]};
 
             // Check if Element Container already exists
             if(main_data->ElementContainerExists(element_container_name)) {
-                request_data.log.append("Element Container '" + element_container_name + "' already exists.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerExistsErrorCode, request_data);
+                transaction_data.log.append("Element Container '" + element_container_name + "' already exists.");
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerExistsErrorCode, transaction_data);
             }
             
             // Create Element Container
             main_data->AddElementContainer(element_container_name);
 
             // Log Element Container successful creation
-            request_data.log.append("Element Container '" + element_container_name + "' was created succesfully.");
-            main_data->GetServerOptions()->LogInfo(request_data);
+            transaction_data.log.append("Element Container '" + element_container_name + "' was created succesfully.");
+            main_data->GetServerOptions()->LogInfo(transaction_data);
 
             // Unlock shared operation
             main_data->UnlockExclusiveElementContainerOperations();
 
         }
 
-        void DeleteElementContainer(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::RequestData& request_data) {
+        void DeleteElementContainer(std::shared_ptr<pandora::MainData>& main_data, pandora::utilities::TransactionData& transaction_data) {
             
             // Check for Element Container in Live Memory
             
@@ -61,20 +61,20 @@ namespace pandora {
             main_data->LockExclusiveElementContainerOperations();
 
             // Element Container name
-            std::string element_container_name {request_data.arguments[pandora::constants::element_container_name]};
+            std::string element_container_name {transaction_data.arguments[pandora::constants::element_container_name]};
 
             // Check if Element Container does not exist
             if(!main_data->ElementContainerExists(element_container_name)) {
-                request_data.log.append("Element Container '" + element_container_name + "' does not exist and could not be deleted.");
-                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, request_data);
+                transaction_data.log.append("Element Container '" + element_container_name + "' does not exist and could not be deleted.");
+                main_data->GetServerOptions()->LogError(pandora::constants::ElementContainerNotExistsErrorCode, transaction_data);
             }
 
             // Delete Element Container
             main_data->DeleteElementContainer(element_container_name);
             
             // Log Element Container successful deletion
-            request_data.log.append("Element Container '" + element_container_name + "' was deleted succesfully.");
-            main_data->GetServerOptions()->LogInfo(request_data);
+            transaction_data.log.append("Element Container '" + element_container_name + "' was deleted succesfully.");
+            main_data->GetServerOptions()->LogInfo(transaction_data);
 
             // Unlock exclusive operation
             main_data->UnlockExclusiveElementContainerOperations();

@@ -51,38 +51,38 @@ namespace pandora {
 
             auto start = std::chrono::high_resolution_clock::now();
 
-            // Request Data creation
-            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
-                                                         std::string(request.get_path()), pandora::constants::http_put, start);
-            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+            // Transaction Data creation
+            pandora::utilities::TransactionData transaction_data(pandora::utilities::GenerateTransactionID(),
+                                                        std::string(request.get_path()), pandora::constants::http_put, start);
+            transaction_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
 
             try {
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, transaction_data);
 
-                pandora::utilities::ValidateElementContainerName(request_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementContainerName(transaction_data, m_main_data->GetServerOptions());
 
-                pandora::core::CreateElementContainer(m_main_data, request_data);
+                pandora::core::CreateElementContainer(m_main_data, transaction_data);
 
                 auto stop = std::chrono::high_resolution_clock::now();
                 std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(start, stop);
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data, ellapsed_milliseconds);
-                m_main_data->GetServerOptions()->LogToFile(request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, transaction_data, ellapsed_milliseconds);
+                m_main_data->GetServerOptions()->LogToFile(transaction_data);
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element Container '" + 
-                                        request_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element Container '" + 
+                                        transaction_data.arguments[pandora::constants::element_container_name] + "' was created succesfully.");
 
-                return response(request_data.log, pandora::constants::http_ok);
+                return response(transaction_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
 
                 // Unlock all locks related to this operation
                 m_main_data->UnlockExclusiveElementContainerOperations();
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + request_data.ellapsed_milliseconds + "} " + std::string(error.what()));
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + transaction_data.ellapsed_milliseconds + "} " + std::string(error.what()));
 
-                return response(request_data.log, pandora::constants::http_internal_error);
+                return response(transaction_data.log, pandora::constants::http_internal_error);
             }
 
         }
@@ -100,37 +100,37 @@ namespace pandora {
             auto start = std::chrono::high_resolution_clock::now();
 
             // Request Data creation
-            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+            pandora::utilities::TransactionData transaction_data(pandora::utilities::GenerateTransactionID(),
                                                          std::string(request.get_path()), pandora::constants::http_delete, start);
-            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+            transaction_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
 
             try {
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, transaction_data);
 
-                pandora::utilities::ValidateElementContainerName(request_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementContainerName(transaction_data, m_main_data->GetServerOptions());
 
-                pandora::core::DeleteElementContainer(m_main_data, request_data);
+                pandora::core::DeleteElementContainer(m_main_data, transaction_data);
 
                 auto stop = std::chrono::high_resolution_clock::now();
                 std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(start, stop);
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data, ellapsed_milliseconds);
-                m_main_data->GetServerOptions()->LogToFile(request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, transaction_data, ellapsed_milliseconds);
+                m_main_data->GetServerOptions()->LogToFile(transaction_data);
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element Container '" + 
-                                        request_data.arguments[pandora::constants::element_container_name] + "' was deleted succesfully.");
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element Container '" + 
+                                        transaction_data.arguments[pandora::constants::element_container_name] + "' was deleted succesfully.");
 
-                return response(request_data.log, pandora::constants::http_ok);
+                return response(transaction_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
                 m_main_data->UnlockExclusiveElementContainerOperations();
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + request_data.ellapsed_milliseconds + "} " + std::string(error.what()));
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + transaction_data.ellapsed_milliseconds + "} " + std::string(error.what()));
 
-                return response(request_data.log, pandora::constants::http_internal_error);
+                return response(transaction_data.log, pandora::constants::http_internal_error);
             }
 
         }
@@ -148,43 +148,43 @@ namespace pandora {
             auto start = std::chrono::high_resolution_clock::now();
 
             // Request Data creation
-            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+            pandora::utilities::TransactionData transaction_data(pandora::utilities::GenerateTransactionID(),
                                                          std::string(request.get_path()), pandora::constants::http_post, start);
-            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
-            request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
-            request_data.arguments[pandora::constants::element_value] = request.get_arg(pandora::constants::element_value);
+            transaction_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+            transaction_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
+            transaction_data.arguments[pandora::constants::element_value] = request.get_arg(pandora::constants::element_value);
 
             try {
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, transaction_data);
 
-                pandora::utilities::ValidateElementContainerName(request_data, m_main_data->GetServerOptions());
-                pandora::utilities::ValidateElementID(request_data, m_main_data->GetServerOptions());
-                pandora::utilities::ValidateElementValue(request_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementContainerName(transaction_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementID(transaction_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementValue(transaction_data, m_main_data->GetServerOptions());
 
-                pandora::core::SetElement(m_main_data, request_data);
+                pandora::core::SetElement(m_main_data, transaction_data);
 
                 auto stop = std::chrono::high_resolution_clock::now();
                 std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(start, stop);
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data, ellapsed_milliseconds);
-                m_main_data->GetServerOptions()->LogToFile(request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, transaction_data, ellapsed_milliseconds);
+                m_main_data->GetServerOptions()->LogToFile(transaction_data);
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element '" +
-                                         request_data.arguments[pandora::constants::element_id] + "' was set succesfully.");
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element '" +
+                                         transaction_data.arguments[pandora::constants::element_id] + "' was set succesfully.");
 
-                return response(request_data.log, pandora::constants::http_ok);
+                return response(transaction_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
-                if(m_main_data->ElementContainerExists(request_data.arguments[pandora::constants::element_container_name])) 
-                    m_main_data->GetElementContainer(request_data.arguments[pandora::constants::element_container_name]).UnlockExclusiveElementOperations();
+                if(m_main_data->ElementContainerExists(transaction_data.arguments[pandora::constants::element_container_name])) 
+                    m_main_data->GetElementContainer(transaction_data.arguments[pandora::constants::element_container_name]).UnlockExclusiveElementOperations();
                 m_main_data->UnlockSharedElementContainerOperations();
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + request_data.ellapsed_milliseconds + "} " + std::string(error.what()));
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + transaction_data.ellapsed_milliseconds + "} " + std::string(error.what()));
                 
-                return response(request_data.log, pandora::constants::http_internal_error);
+                return response(transaction_data.log, pandora::constants::http_internal_error);
             }
 
         }
@@ -202,40 +202,40 @@ namespace pandora {
             auto start = std::chrono::high_resolution_clock::now();
 
             // Request Data creation
-            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+            pandora::utilities::TransactionData transaction_data(pandora::utilities::GenerateTransactionID(),
                                                          std::string(request.get_path()), pandora::constants::http_get, start);
-            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
-            request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
+            transaction_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+            transaction_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
 
             try {
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, transaction_data);
 
-                pandora::utilities::ValidateElementContainerName(request_data, m_main_data->GetServerOptions());
-                pandora::utilities::ValidateElementID(request_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementContainerName(transaction_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementID(transaction_data, m_main_data->GetServerOptions());
 
-                std::string element_value = pandora::core::GetElement(m_main_data, request_data);
+                std::string element_value = pandora::core::GetElement(m_main_data, transaction_data);
 
                 auto stop = std::chrono::high_resolution_clock::now();
                 std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(start, stop);
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data, ellapsed_milliseconds);
-                m_main_data->GetServerOptions()->LogToFile(request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, transaction_data, ellapsed_milliseconds);
+                m_main_data->GetServerOptions()->LogToFile(transaction_data);
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + element_value);
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + element_value);
                 
-                return response(request_data.log, pandora::constants::http_ok);
+                return response(transaction_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
-                if(m_main_data->ElementContainerExists(request_data.arguments[pandora::constants::element_container_name])) 
-                    m_main_data->GetElementContainer(request_data.arguments[pandora::constants::element_container_name]).UnlockSharedElementOperations();
+                if(m_main_data->ElementContainerExists(transaction_data.arguments[pandora::constants::element_container_name])) 
+                    m_main_data->GetElementContainer(transaction_data.arguments[pandora::constants::element_container_name]).UnlockSharedElementOperations();
                 m_main_data->UnlockSharedElementContainerOperations();
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + request_data.ellapsed_milliseconds + "} " + std::string(error.what()));
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + transaction_data.ellapsed_milliseconds + "} " + std::string(error.what()));
                 
-                return response(request_data.log, pandora::constants::http_internal_error);
+                return response(transaction_data.log, pandora::constants::http_internal_error);
             }
 
         }
@@ -253,41 +253,41 @@ namespace pandora {
             auto start = std::chrono::high_resolution_clock::now();
 
             // Request Data creation
-            pandora::utilities::RequestData request_data(pandora::utilities::GenerateTransactionID(),
+            pandora::utilities::TransactionData transaction_data(pandora::utilities::GenerateTransactionID(),
                                                          std::string(request.get_path()), pandora::constants::http_delete, start);
-            request_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
-            request_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
+            transaction_data.arguments[pandora::constants::element_container_name] = request.get_arg(pandora::constants::element_container_name);
+            transaction_data.arguments[pandora::constants::element_id] = request.get_arg(pandora::constants::element_id);
 
             try {
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionStartedCode, transaction_data);
 
-                pandora::utilities::ValidateElementContainerName(request_data, m_main_data->GetServerOptions());
-                pandora::utilities::ValidateElementID(request_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementContainerName(transaction_data, m_main_data->GetServerOptions());
+                pandora::utilities::ValidateElementID(transaction_data, m_main_data->GetServerOptions());
 
-                pandora::core::DeleteElement(m_main_data, request_data);
+                pandora::core::DeleteElement(m_main_data, transaction_data);
 
                 auto stop = std::chrono::high_resolution_clock::now();
                 std::string ellapsed_milliseconds = pandora::utilities::GetEllapsedMillisecondsString(start, stop);
 
-                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, request_data, ellapsed_milliseconds);
-                m_main_data->GetServerOptions()->LogToFile(request_data);
+                m_main_data->GetServerOptions()->LogTransactionStartedFinished(pandora::constants::TransactionFinishedCode, transaction_data, ellapsed_milliseconds);
+                m_main_data->GetServerOptions()->LogToFile(transaction_data);
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element '" +
-                                         request_data.arguments[pandora::constants::element_id] + "' was deleted succesfully.");
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + ellapsed_milliseconds + "} | " + "Element '" +
+                                         transaction_data.arguments[pandora::constants::element_id] + "' was deleted succesfully.");
                 
-                return response(request_data.log, pandora::constants::http_ok);
+                return response(transaction_data.log, pandora::constants::http_ok);
 
             } catch(std::runtime_error error) {
 
                 // Unlock all mutex locks related to this operation
-                if(m_main_data->ElementContainerExists(request_data.arguments[pandora::constants::element_container_name])) 
-                    m_main_data->GetElementContainer(request_data.arguments[pandora::constants::element_container_name]).UnlockExclusiveElementOperations();
+                if(m_main_data->ElementContainerExists(transaction_data.arguments[pandora::constants::element_container_name])) 
+                    m_main_data->GetElementContainer(transaction_data.arguments[pandora::constants::element_container_name]).UnlockExclusiveElementOperations();
                 m_main_data->UnlockSharedElementContainerOperations();
                 
-                request_data.log.append("[" + request_data.transaction_id + "] " + "{" + request_data.ellapsed_milliseconds + "} " + std::string(error.what()));
+                transaction_data.log.append("[" + transaction_data.transaction_id + "] " + "{" + transaction_data.ellapsed_milliseconds + "} " + std::string(error.what()));
                 
-                return response(request_data.log, pandora::constants::http_internal_error);
+                return response(transaction_data.log, pandora::constants::http_internal_error);
             }
 
         }

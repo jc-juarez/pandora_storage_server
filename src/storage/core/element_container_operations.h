@@ -21,8 +21,8 @@ namespace pandora {
 
     namespace core {
 
-        void CreateElementContainer(std::shared_ptr<pandora::MainData>&, pandora::utilities::RequestData&);
-        void DeleteElementContainer(std::shared_ptr<pandora::MainData>&, pandora::utilities::RequestData&);
+        void CreateElementContainer(std::shared_ptr<pandora::MainData>&, pandora::utilities::TransactionData&);
+        void DeleteElementContainer(std::shared_ptr<pandora::MainData>&, pandora::utilities::TransactionData&);
 
     }
 
