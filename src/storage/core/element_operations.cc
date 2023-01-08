@@ -231,16 +231,6 @@ namespace pandora {
                 int shard_size = element_container.GetShard(search_result.second).GetShardSize();
                 element_container.GetShard(search_result.second).UpdateShardSize(shard_size - 1);
             }
-            
-            // Construct Element
-            std::string element {};
-
-            // Append Element ID
-            element.append(element_id);
-            // Append Delimeter
-            element.append(pandora::constants::element_delimeter);
-            // Append Value
-            element.append(element_value + "\n");
 
             // Look for non-full Shard to insert Element
             int full_shards_count {};
@@ -257,6 +247,18 @@ namespace pandora {
                 element_container.IncreaseRoundRobinIndex();
 
             }
+
+            // Construct Element
+            std::string element {};
+
+            if(element_container.GetShard(element_container.GetRoundRobinIndex()).GetShardSize() != 0) element.append("\n");
+
+            // Append Element ID
+            element.append(element_id);
+            // Append Delimeter
+            element.append(pandora::constants::element_delimeter);
+            // Append Value
+            element.append(element_value);
 
             // Add Element to Shard
             pandora::storage::FileOperation(element_container.GetShard(element_container.GetRoundRobinIndex()).GetShardStorageFilePath(), pandora::constants::FileOption::Append, element);

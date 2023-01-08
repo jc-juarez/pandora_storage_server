@@ -31,6 +31,17 @@ namespace pandora {
 
         bool element_container_exists = std::filesystem::exists(GetElementContainerPath());
 
+        if(!element_container_exists) {
+
+            // Construct Element Container
+            pandora::storage::CreateDirectory(GetElementContainerPath());
+            // Data File creation
+            pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Create);
+            // Shards Directory creation
+            pandora::storage::CreateDirectory(GetElementContainerShardsPath());
+
+        }
+
         // Construct Shards
         for(int shard_index = 0; shard_index < pandora::constants::number_shards; ++shard_index) {
             CreateShard(shard_index, element_container_exists);
@@ -38,27 +49,36 @@ namespace pandora {
 
         // If true, Element Container already exists on Disk and is being brought to Memory on server startup
         if(element_container_exists) {
-            // Recover Element Container data
-            m_element_container_size = std::stoi(GetElementContainerData(pandora::constants::element_container_datafile_size_index));
-            m_round_robin_index = std::stoi(GetElementContainerData(pandora::constants::element_container_datafile_round_robin_index_index));
-            return;
+
+            try {
+
+                // Recover Element Container data
+                // If Data File is healthy recover from Disk
+                if(pandora::storage::CountFileLines(GetElementContainerDataFilePath()) == pandora::constants::element_container_data_file_size) {
+                    m_element_container_size = std::stoi(GetElementContainerData(pandora::constants::element_container_datafile_size_index));
+                    m_round_robin_index = std::stoi(GetElementContainerData(pandora::constants::element_container_datafile_round_robin_index_index));
+                    return;
+                }    
+
+            } catch(...) {
+
+                // Data File is corrupted; hard recover
+                // Data File creation
+                pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Create);
+
+                for(int shard_index = 0; shard_index < pandora::constants::number_shards; ++shard_index) {
+                    m_element_container_size += GetShard(shard_index).GetShardSize();
+                    // Round Robin Index stays in Initial Value
+                }
+
+            }         
+
         }
-
-        // Construct Element Container
-        pandora::storage::CreateDirectory(GetElementContainerPath());
-
-        // Data File creation
-        pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Create);
-        // Shards Directory creation
-        pandora::storage::CreateDirectory(GetElementContainerShardsPath());
 
         // Fill Data File
         pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, std::to_string(GetElementContainerSize()) + "\n");
         pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, std::to_string(GetRoundRobinIndex()) + "\n");
         pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, GetElementContainerName() + "\n");
-        pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, GetElementContainerPath() + "\n");
-        pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, GetElementContainerDataFilePath() + "\n");
-        pandora::storage::FileOperation(GetElementContainerDataFilePath(), pandora::constants::FileOption::Append, GetElementContainerShardsPath() + "\n");
 
     }
 

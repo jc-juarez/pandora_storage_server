@@ -23,27 +23,45 @@ namespace pandora {
         m_shard_data_file_path.append(GetShardPath() + "/" + pandora::constants::data);
         m_shard_storage_file_path.append(GetShardPath() + "/" + pandora::constants::storage);
 
-        // If true, Element Container already exists on Disk and is being brought to Memory on server startup 
-        if(element_container_exists) {
-            // Recover Shard size
-            m_shard_size = std::stoi(GetShardData(pandora::constants::shard_datafile_size_index));
-            return;
+        if(!element_container_exists) {
+
+            // Create Shard
+            pandora::storage::CreateDirectory(GetShardPath());
+            // Data File creation
+            pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Create);
+            // Storage File creation
+            pandora::storage::FileOperation(GetShardStorageFilePath(), pandora::constants::FileOption::Create);
+
         }
+        // Element Container already exists on Disk and is being brought to Memory on server startup 
+        else {
 
-        // Create Shard
-        pandora::storage::CreateDirectory(GetShardPath());
+            try {
 
-        // Data File creation
-        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Create);
-        // Storage File creation
-        pandora::storage::FileOperation(GetShardStorageFilePath(), pandora::constants::FileOption::Create);
+                // Recover Shard size
+                // If Data File is healthy recover from Disk
+                if(pandora::storage::CountFileLines(GetShardDataFilePath()) == pandora::constants::shard_data_file_size) {
+                    m_shard_size = std::stoi(GetShardData(pandora::constants::shard_datafile_size_index));
+                    return;
+                } 
+
+            } catch(...) {
+
+                // Data File is corrupted; hard recover 
+                // Data File creation
+                pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Create);
+
+                for(int shard_index = 0; shard_index < pandora::constants::number_shards; ++shard_index) {
+                    m_shard_size = pandora::storage::CountFileLines(GetShardStorageFilePath());
+                }
+
+            }
+
+        }
 
         // Fill Data File
         pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, std::to_string(GetShardSize()) + "\n");
         pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardName() + "\n");
-        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardPath() + "\n");
-        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardDataFilePath() + "\n");
-        pandora::storage::FileOperation(GetShardDataFilePath(), pandora::constants::FileOption::Append, GetShardStorageFilePath() + "\n");
 
     }
 

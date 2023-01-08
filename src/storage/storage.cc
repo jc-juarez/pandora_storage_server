@@ -81,6 +81,22 @@ namespace pandora {
 
         }
 
+        int CountFileLines(const std::string& file_path) {
+
+            std::ifstream read_file;
+            read_file.open(file_path);
+
+            int number_lines {0};
+            std::string line {};
+
+            while(std::getline(read_file, line)) {
+                if(!line.empty() && line[0] != '\0') ++number_lines;
+            }
+
+            return number_lines;
+
+        }
+
     }
 
 } // namespace pandora

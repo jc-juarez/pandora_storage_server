@@ -46,16 +46,12 @@ namespace pandora {
         inline constexpr int element_container_datafile_size_index {0};
         inline constexpr int element_container_datafile_round_robin_index_index {1};
         inline constexpr int element_container_datafile_name_index {2};
-        inline constexpr int element_container_datafile_path_index {3};
-        inline constexpr int element_container_datafile_data_file_path_index {4};
-        inline constexpr int element_container_datafile_storage_file_path_index {5};
         inline constexpr int shard_datafile_size_index {0};
         inline constexpr int shard_datafile_name_index {1};
-        inline constexpr int shard_datafile_path_index {2};
-        inline constexpr int shard_datafile_data_file_path_index {3};
-        inline constexpr int shard_datafile_storage_file_path_index {4};
-        inline constexpr int number_shards {100};
-        inline constexpr int number_search_threads {10};
+        inline constexpr int number_shards {200};
+        inline constexpr int number_search_threads {20};
+        inline constexpr int element_container_data_file_size {3};
+        inline constexpr int shard_data_file_size {2};
         inline constexpr int not_found_int {-1};
         inline constexpr double milliseconds_division {1000000};
         inline constexpr char port_number_option {'p'};
@@ -82,8 +78,8 @@ namespace pandora {
 
         // Validation and Restrictions
         inline constexpr size_t ElementContainerNameMaxSize {100};
-        inline constexpr size_t ElementContainerMaxCapacity {100000};
-        inline constexpr size_t ShardMaxCapacity {1000};
+        inline constexpr size_t ElementContainerMaxCapacity {500000};
+        inline constexpr size_t ShardMaxCapacity {2500};
         inline constexpr size_t ElementIDMaxSize {50};
         inline constexpr size_t ElementValueMaxSize {1000};
         inline const std::string element_delimeter {"<//>"};

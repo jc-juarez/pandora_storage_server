@@ -21,7 +21,8 @@
 int main(int argc, char** argv) {
 
     // Check for process running with privileges
-    if(getuid()) throw std::runtime_error("Pandora could not start without root user privileges. Run the process as root.");
+    if(getuid()) 
+        throw std::runtime_error("<!> Pandora could not start without root user privileges. Run the process as root.");
 
     // Initial server configuration
     pandora::ServerOptions server_options(pandora::constants::default_port_number,
@@ -40,10 +41,8 @@ int main(int argc, char** argv) {
         int daemon_result = daemon(1, 1);
 
         // Check for daemon result
-        if(daemon_result == -1) {
-            std::cout << "\n<!> Pandora Storage Server encountered an error while trying to daemonize the process for Non-Debug mode.\n\n" << std::endl;
-            return -1;
-        }
+        if(daemon_result == -1) 
+            throw std::runtime_error("<!> Pandora Storage Server encountered an error while trying to daemonize the process for Non-Debug mode.");
 
     }
 
@@ -55,10 +54,23 @@ int main(int argc, char** argv) {
     // Create Pandora's directories
     pandora::utilities::CreateBaseDirectories();
 
-    // Storage Core: Main Cache creation
-    std::shared_ptr<pandora::ElementContainerCache> main_cache = std::make_shared<pandora::ElementContainerCache>();
-    // Storage Core: Main Data creation
-    std::shared_ptr<pandora::MainData> main_data = std::make_shared<pandora::MainData>(main_cache, &server_options);
+    // Main System Cache
+    std::shared_ptr<pandora::ElementContainerCache> main_cache;
+    // Main System Data
+    std::shared_ptr<pandora::MainData> main_data;
+
+    try {
+
+        // Storage Core: Main Cache creation
+        main_cache = std::make_shared<pandora::ElementContainerCache>();
+        // Storage Core: Main Data creation
+        main_data = std::make_shared<pandora::MainData>(main_cache, &server_options);
+
+    } catch(...) {
+
+        throw std::runtime_error("<!> Pandora Storage Server encountered an error while trying to Initialize the Data Store System.");
+
+    }
 
     // Server Endpoints Referencing
     pandora::utilities::SetEndpoints(pandora_storage_server, main_data);
